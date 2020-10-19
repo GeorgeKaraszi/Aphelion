@@ -1,44 +1,34 @@
 #ifndef APWINDOW_RENDERERD3D_HPP
 #define APWINDOW_RENDERERD3D_HPP
 
-#include <pch.hpp>
+#include <ApInclude/pch.hpp>
 #include <functional>
-#include "Window.hpp"
 
 namespace ApWindow
 {
   class RendererD3D
   {
   public:
-    struct ViewPointSize { float WIDTH, HEIGHT; };
     typedef typename std::function<void()> vRendererCallback;
   public:
     RendererD3D()                    = delete;
     RendererD3D(const RendererD3D &) = default;
 
-    explicit RendererD3D(ApWindow::Window&);
+    explicit RendererD3D(HWND hwnd, int width, int height);
     ~RendererD3D();
 
-    auto *GetWindow()        { return &m_window; }
-    auto *GetDevice()        { return m_Device; }
-    auto *GetDeviceContext() { return m_DeviceContext; }
-    auto *GetSwapChain()     { return m_SwapChain; }
+    ID3D11Device         *GetDevice()        { return m_Device; }
+    ID3D11DeviceContext  *GetDeviceContext() { return m_DeviceContext; }
+    IDXGISwapChain       *GetSwapChain()     { return m_SwapChain; }
 
     HRESULT Render(const vRendererCallback& callback);
 
     void ToggleVSync();
 
-    [[maybe_unused]]
-    ViewPointSize GetViewPortSize();
-    void OnWindowResize();
     void OnWindowResize(int width, int height);
     void ShutDown();
 
   private:
-    void InitializeRenderer();
-
-  private:
-    ApWindow::Window       m_window;
     bool                   m_IsShutdown        = false;
     u_int                  m_vsync             = 0;
     u_int                  m_MSAAQualtiy       = 3;
