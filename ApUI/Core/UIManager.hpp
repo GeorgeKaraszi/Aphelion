@@ -1,8 +1,8 @@
 #ifndef APUI_CORE_UIMANAGER_HPP
 #define APUI_CORE_UIMANAGER_HPP
 
-#include <pch.hpp>
-#include <Modules/Canvas.hpp>
+#include <ApInclude/pch.hpp>
+#include <ApUI/Modules/Canvas.hpp>
 
 namespace ApUI::Core
 {
@@ -31,7 +31,7 @@ namespace ApUI::Core
   private:
     static void ApplyStyle();
   private:
-    Modules::Canvas *m_currentCanvas = nullptr
+    Modules::Canvas *m_currentCanvas = nullptr;
   };
 }
 

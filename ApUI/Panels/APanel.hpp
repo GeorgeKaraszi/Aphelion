@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
-#include <Plugins/IDrawable.hpp>
+#include <ApUI/Plugins/IDrawable.hpp>
 
 namespace ApUI::Panels
 {

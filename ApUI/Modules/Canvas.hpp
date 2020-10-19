@@ -1,11 +1,11 @@
 #ifndef APUI_MODULES_CANVAS_HPP
 #define APUI_MODULES_CANVAS_HPP
 
-#include <Plugins/IDrawable.hpp>
-#include <Panels/APanel.hpp>
-#include <ImGui/imgui.h>
-#include <ImGui/imgui_impl_dx11.h>
-#include <ImGui/imgui_impl_win32.h>
+#include <ApUI/Plugins/IDrawable.hpp>
+#include <ApUI/Panels/APanel.hpp>
+#include <ApUI/ImGui/imgui.h>
+#include <ApUI/ImGui/imgui_impl_dx11.h>
+#include <ApUI/ImGui/imgui_impl_win32.h>
 
 namespace ApUI::Modules
 {
