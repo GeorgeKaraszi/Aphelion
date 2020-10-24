@@ -4,7 +4,7 @@
 #include <vector>
 #include "IPlugin.hpp"
 
-namespace Aphelion::ApUI::Plugins
+namespace ApUI::Plugins
 {
   class Pluginable
   {

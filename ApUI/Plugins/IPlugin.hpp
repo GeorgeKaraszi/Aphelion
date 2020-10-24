@@ -1,7 +1,7 @@
-#ifndef APHELION_APUI_PLUGINS_IPLUGIN_HPP
-#define APHELION_APUI_PLUGINS_IPLUGIN_HPP
+#ifndef APUI_PLUGINS_IPLUGIN_HPP
+#define APUI_PLUGINS_IPLUGIN_HPP
 
-namespace Aphelion::ApUI::Plugins
+namespace ApUI::Plugins
 {
   class IPlugin
   {
@@ -11,4 +11,4 @@ namespace Aphelion::ApUI::Plugins
   };
 }
 
-#endif //APHELION_APUI_PLUGINS_IPLUGIN_HPP
+#endif // APUI_PLUGINS_IPLUGIN_HPP
