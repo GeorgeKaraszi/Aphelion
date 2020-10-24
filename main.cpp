@@ -55,14 +55,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
-  auto window = ApWindow::Window(hInstance);
-  if(!window.ApCreateWindow(WindowProc, "main"))
-  {
-    std::cout << "Could not create window!" << std::endl;
-    return 1;
-  }
-
-  run_overlay(std::make_shared<ApWindow::RendererD3D>(window));
+//  auto window = ApWindow::Window(hInstance);
+//  if(!window.ApCreateWindow(WindowProc, "main"))
+//  {
+//    std::cout << "Could not create window!" << std::endl;
+//    return 1;
+//  }
+//
+//  run_overlay(std::make_shared<ApWindow::RendererD3D>(window));
 
   return 0;
 }
