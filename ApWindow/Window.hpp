@@ -12,6 +12,7 @@ namespace ApWindow
     Window()              = delete;
     Window(const Window&) = default;
     explicit Window(HINSTANCE inst, bool primary_screen = false);
+    explicit Window(HINSTANCE inst, WNDPROC lpWndProc, const char *name);
 
     bool ApCreateWindow(WNDPROC lpWndProc, const char *name);
     void ToggleWindow();

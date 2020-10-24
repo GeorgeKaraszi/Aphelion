@@ -98,6 +98,11 @@ namespace ApWindow
     return m_SwapChain->Present(m_vsync, 0);
   }
 
+  bool RendererD3D::IsShutDown() const
+  {
+    return m_IsShutdown;
+  }
+
   void RendererD3D::ToggleVSync()
   {
     m_vsync = m_vsync == 0 ? 1 : 0;

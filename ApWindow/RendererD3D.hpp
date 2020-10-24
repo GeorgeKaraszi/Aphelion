@@ -23,6 +23,9 @@ namespace ApWindow
 
     HRESULT Render(const vRendererCallback& callback);
 
+    [[nodiscard]]
+    bool IsShutDown() const;
+
     void ToggleVSync();
 
     void OnWindowResize(int width, int height);

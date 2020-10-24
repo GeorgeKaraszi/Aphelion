@@ -23,10 +23,16 @@ namespace ApUI::Modules
 
   void Canvas::RemovePanel(Panels::APanel &p_panel)
   {
-    m_panels.erase(std::remove_if(m_panels.begin(), m_panels.end(), [&p_panel](std::reference_wrapper<Panels::APanel>& p_item)
+    auto position = std::find_if(
+        m_panels.begin(),
+        m_panels.end(),
+        [&p_panel](std::reference_wrapper<Panels::APanel>& p_item) { return &p_panel == &p_item.get();}
+    );
+
+    if(position != m_panels.end())
     {
-      return &p_panel == &p_item.get();
-    }));
+      m_panels.erase(position);
+    }
   }
 
   void Canvas::RemoveAllPanels()
