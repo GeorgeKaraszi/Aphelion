@@ -4,10 +4,11 @@
 #include <vector>
 #include <unordered_map>
 #include <ApUI/Plugins/IDrawable.hpp>
+#include <ApUI/Widgets/WidgetContainer.hpp>
 
 namespace ApUI::Panels
 {
-  class APanel : public Plugins::IDrawable
+  class APanel : public Plugins::IDrawable, public Widgets::WidgetContainer
   {
   public:
     APanel();
