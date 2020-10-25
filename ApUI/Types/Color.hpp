@@ -6,7 +6,7 @@ namespace ApUI::Types
 {
   struct Color
   {
-    Color(float p_r = 1.0f, float p_g = 1.0f, float p_b = 1.0f, float p_a = 1.0f);
+    Color(float p_r = 255, float p_g = 255, float p_b = 255, float p_a = 255);
     explicit Color(ImVec4& im_color);
     explicit Color(ImColor& im_color);
 
@@ -25,7 +25,10 @@ namespace ApUI::Types
 
     bool operator==(const Color &other) const;
     bool operator!=(const Color &other) const;
-    inline explicit operator ImU32() const;
+
+    [[nodiscard]] ImColor ToImColor() const;
+    inline explicit operator ImColor() const;
+    [[nodiscard]] ImVec4 ToImVec4() const;
     inline explicit operator ImVec4() const;
   };
 }

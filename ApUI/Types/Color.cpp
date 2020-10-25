@@ -4,16 +4,16 @@
 
 namespace ApUI::Types
 {
-  const Color Color::Red        = { 1.0f, 0.0f, 0.0f };
-  const Color Color::Green      = { 0.0f, 1.0f, 0.0f };
-  const Color Color::Blue       = { 0.0f, 0.0f, 1.0f };
-  const Color Color::White      = { 1.0f, 1.0f, 1.0f };
-  const Color Color::Black      = { 0.0f, 0.0f, 0.0f };
-  const Color Color::Yellow     = { 1.0f, 1.0f, 0.0f };
-  const Color Color::Cyan       = { 0.0f, 1.0f, 1.0f };
-  const Color Color::Faction_TR = { 242.0f, 13.0f, 29.0f };
-  const Color Color::Faction_NC = { 49.0f, 57.0f, 247.0f };
-  const Color Color::Faction_VS = { 140.0f, 12.0f, 197.0f };
+  const Color Color::Red        = { 255, 0, 0 };
+  const Color Color::Green      = { 0, 255, 0 };
+  const Color Color::Blue       = { 0, 0, 255 };
+  const Color Color::White      = { 255, 255, 255 };
+  const Color Color::Black      = { 0, 0, 0 };
+  const Color Color::Yellow     = { 255, 255, 0 };
+  const Color Color::Cyan       = { 0, 255, 255 };
+  const Color Color::Faction_TR = { 242, 13, 29 };
+  const Color Color::Faction_NC = { 49, 57, 247 };
+  const Color Color::Faction_VS = { 140, 12, 197 };
 
   Color::Color(float p_r, float p_g, float p_b, float p_a)
   : r(p_r), g(p_g), b(p_b), a(p_a)
@@ -41,17 +41,25 @@ namespace ApUI::Types
     return !operator==(other);
   }
 
-  Color::operator ImU32 () const
+  ImColor Color::ToImColor() const
   {
-    return ImGui::ColorConvertFloat4ToU32(operator ImVec4());
+    return ImColor(static_cast<int>(r), static_cast<int>(g), static_cast<int>(b), static_cast<int>(a));
+  }
+
+  Color::operator ImColor() const
+  {
+    return ToImColor();
+  }
+
+  ImVec4 Color::ToImVec4() const
+  {
+    return ImVec4(r, g, b, a);
   }
 
   Color::operator ImVec4() const
   {
-    return ImVec4(r, g, b, a);
+    return ToImVec4();
   }
 }
-
-
 
 #pragma clang diagnostic pop
