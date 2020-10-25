@@ -33,15 +33,6 @@ namespace ApUI::Widgets
     m_widgets.clear();
   }
 
-  template<typename T, typename ... Args>
-  T& WidgetContainer::CreateWidget(Args&&...args)
-  {
-    T *widget = new T(args...);
-    widget->SetParent(this);
-    m_widgets.push_back(widget);
-    return *widget;
-  }
-
   void WidgetContainer::GarbageCollect()
   {
     m_widgets.erase(std::remove_if(m_widgets.begin(), m_widgets.end(), [](AWidget* widget)

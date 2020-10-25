@@ -12,12 +12,19 @@ namespace ApUI::Widgets
     void RemoveWidget(AWidget &target);
     void RemoveAllWidgets();
 
-    template<typename T, typename ... Args>
-    T& CreateWidget(Args&&...args);
-
     void GarbageCollect();
     void DrawWidgets();
 
+
+    template<typename T, typename ...Args>
+    T& CreateWidget(Args&&...args)
+    {
+      m_widgets.push_back(new T(std::forward<Args>(args)...));
+      T &widget = *reinterpret_cast<T*>(m_widgets.back());
+      widget.SetParent(this);
+
+      return widget;
+    }
 
   protected:
     std::vector<AWidget*> m_widgets;
