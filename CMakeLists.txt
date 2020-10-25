@@ -41,7 +41,6 @@ file(GLOB MAIN_FILES "*.h" "*.hpp" "*.cpp" "*.rc")
 add_executable(${EXE_NAME} WIN32 ${MAIN_FILES})
 target_link_libraries(
         ${EXE_NAME}
-        ApTools
         ApWindow
         ApUI
         ApGame
