@@ -6,11 +6,11 @@ namespace ApUI::Types
 {
   struct Color
   {
-    Color(float p_r = 255, float p_g = 255, float p_b = 255, float p_a = 255);
+    Color(int p_r = 255, int p_g = 255, int p_b = 255, int p_a = 255);
     explicit Color(ImVec4& im_color);
     explicit Color(ImColor& im_color);
 
-    float r, g, b, a;
+    int r, g, b, a;
 
     static const Color Red;
     static const Color Green;
