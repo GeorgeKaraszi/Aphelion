@@ -13,13 +13,7 @@ namespace ApWindow
   Window::Window(HINSTANCE inst, WNDPROC lpWndProc, const char *name)
   : Window(inst, false)
   {
-    ApCreateWindow(lpWndProc, name);
-  }
-
-  bool Window::ApCreateWindow(WNDPROC lpWndProc, const char *name)
-  {
     m_hwnd = MakeWindow(lpWndProc, name);
-    return PRESENT_PTR(m_hwnd);
   }
 
   HWND Window::GetMainWnd()

@@ -4,6 +4,7 @@
 #include <ApWindow/Window.hpp>
 #include <ApWindow/RendererD3D.hpp>
 #include <ApUI/Core/UIManager.hpp>
+#include <ApGame/Panels/Menus/MainMenu.hpp>
 
 namespace ApGame::Core
 {
@@ -14,19 +15,19 @@ namespace ApGame::Core
     explicit Application(HINSTANCE hinst);
 
     void Run();
-    bool IsRunning();
+
+    [[nodiscard]]
+    bool IsRunning() const;
 
     static Application* GetApplication();
-
-  private:
-    void BuildCanvas();
-
   public:
     std::unique_ptr<ApWindow::Window>      window;
     std::unique_ptr<ApWindow::RendererD3D> renderer;
     std::unique_ptr<ApUI::Core::UIManager> uiManager;
+    ApUI::Modules::Canvas                  canvas;
 
   private:
+    Panels::Menus::MainMenu m_menu;
     bool m_running = true;
     bool m_visible = true;
   };

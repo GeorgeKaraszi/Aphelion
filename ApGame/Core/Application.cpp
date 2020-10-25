@@ -33,6 +33,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 namespace ApGame::Core
 {
   Application::Application(HINSTANCE hinst)
+    : m_menu("Main Menu", true)
   {
     window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay");
     renderer  = std::make_unique<ApWindow::RendererD3D>(window->GetMainWnd(), window->GetWidth(), window->GetHeight());
@@ -44,8 +45,8 @@ namespace ApGame::Core
         window->GetHeight()
     );
 
-    BuildCanvas();
-
+    canvas.AddPanel(m_menu);
+    uiManager->SetCanvas(canvas);
     g_application = this;
   }
 
@@ -57,15 +58,9 @@ namespace ApGame::Core
     }
   }
 
-  bool Application::IsRunning()
+  bool Application::IsRunning() const
   {
     return m_running;
-  }
-
-  void Application::BuildCanvas()
-  {
-    ApUI::Modules::Canvas canvas;
-    uiManager->SetCanvas(canvas)
   }
 
   Application *Application::GetApplication()
