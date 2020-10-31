@@ -5,6 +5,7 @@
 #include <ApWindow/RendererD3D.hpp>
 #include <ApUI/Core/UIManager.hpp>
 #include <ApGame/Panels/Menus/MainMenu.hpp>
+#include <ApGame/Panels/Menus/ScoreMenu.hpp>
 
 namespace ApGame::Core
 {
@@ -14,7 +15,7 @@ namespace ApGame::Core
     Application() = delete;
     explicit Application(HINSTANCE hinst);
 
-    void Run();
+    void Run() const;
 
     [[nodiscard]]
     bool IsRunning() const;
@@ -28,6 +29,7 @@ namespace ApGame::Core
 
   private:
     Panels::Menus::MainMenu m_menu;
+    Panels::Menus::ScoreMenu m_score;
     bool m_running = true;
     bool m_visible = true;
   };

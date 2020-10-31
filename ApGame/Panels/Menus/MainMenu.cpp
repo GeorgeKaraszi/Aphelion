@@ -9,7 +9,7 @@ namespace ApGame::Panels::Menus
     : ApUI::Panels::PanelWindow(title, opened)
   {
     m_buttons = &CreateWidget<ApUI::Widgets::Layout::Group>();
-    m_buttons->CreateWidget<ApUI::Widgets::Buttons::Button>("Test", ImVec2(100, 100));
+    &m_buttons->CreateWidget<ApUI::Widgets::Buttons::Button>("Test", ImVec2(100, 100));
     m_buttons->CreateWidget<ApUI::Widgets::Buttons::Button>("Test 2", ImVec2(100, 100));
     m_buttons->CreateWidget<ApUI::Widgets::Texts::TextColored>("COMING SOON", ApUI::Types::Color::Faction_NC);
   }

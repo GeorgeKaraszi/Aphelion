@@ -1,5 +1,4 @@
 #include "Application.hpp"
-#include <ApUI/Modules/Canvas.hpp>
 
 static ApGame::Core::Application *g_application = nullptr;
 
@@ -33,7 +32,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 namespace ApGame::Core
 {
   Application::Application(HINSTANCE hinst)
-    : m_menu("Main Menu", true)
+    : m_menu("Main Menu", true), m_score("Score Menu", true)
   {
     window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay");
     renderer  = std::make_unique<ApWindow::RendererD3D>(window->GetMainWnd(), window->GetWidth(), window->GetHeight());
@@ -45,12 +44,18 @@ namespace ApGame::Core
         window->GetHeight()
     );
 
-    canvas.AddPanel(m_menu);
+    auto *panel = &m_score;
+    auto *io    = &ImGui::GetIO();
+    auto pos    = ImVec2(io->DisplaySize.x/5,  io->DisplaySize.y/5);
+    auto size   = ImVec2(io->DisplaySize.x/2, io->DisplaySize.y/2);
+    panel->SetPosition(pos);
+    panel->SetSize(size);
+    canvas.AddPanel(*panel);
     uiManager->SetCanvas(canvas);
     g_application = this;
   }
 
-  void Application::Run()
+  void Application::Run() const
   {
     if(IsRunning() && window->IsVisible() && !renderer->IsShutDown())
     {
