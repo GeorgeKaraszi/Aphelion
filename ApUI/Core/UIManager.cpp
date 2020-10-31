@@ -11,7 +11,9 @@ namespace ApUI::Core
       )
   {
     ImGui::CreateContext();
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    auto *io = &ImGui::GetIO();
+    io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io->DisplaySize = ImVec2(width, height);
 
 //    SetDisplaySize(width, height);
     ApplyStyle();
