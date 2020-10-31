@@ -1,24 +1,21 @@
 #include "ButtonColored.hpp"
 
-#include <utility>
-#include <ApUI/ImGui/imgui_internal.h>
-
 namespace ApUI::Widgets::Buttons
 {
   ButtonColored::ButtonColored(
-      std::string label,
+      const char* label,
       ImVec2 size,
       const Types::Color &bg_color,
       const Types::Color &fg_color,
       bool enabled
   )
-    : label(std::move(label)), size(size), bg_color(bg_color), fg_color(fg_color), enabled(enabled)
+    : label(label), size(size), bg_color(bg_color), fg_color(fg_color), enabled(enabled)
   {}
 
   void ButtonColored::_Draw_Impl()
   {
-    ImVec4 background_color(bg_color);
-    ImVec4 foreground_color(fg_color);
+    ImVec4 background_color(bg_color.ToImVec4());
+    ImVec4 foreground_color(fg_color.ToImVec4());
 
     ImGui::PushStyleColor(ImGuiCol_Button,        background_color);
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, background_color);

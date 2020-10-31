@@ -8,6 +8,7 @@ namespace ApUI::Widgets
   class WidgetContainer
   {
   public:
+    AWidget* operator[](int idx);
     std::vector<AWidget*> &GetWidgets();
     void RemoveWidget(AWidget &target);
     void RemoveAllWidgets();

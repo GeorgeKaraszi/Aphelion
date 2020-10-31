@@ -4,6 +4,11 @@
 
 namespace ApUI::Widgets
 {
+  AWidget *WidgetContainer::operator[](int idx)
+  {
+    return m_widgets[idx];
+  }
+
   std::vector<AWidget*> &WidgetContainer::GetWidgets()
   {
     return m_widgets;

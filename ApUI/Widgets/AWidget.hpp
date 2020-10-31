@@ -5,6 +5,7 @@
 #include <ApUI/Plugins/Pluginable.hpp>
 #include <ApUI/Plugins/IDrawable.hpp>
 #include <ApUI/ImGui/imgui.h>
+#include <ApUI/ImGui/imgui_internal.h>
 
 namespace ApUI::Widgets
 {
@@ -26,6 +27,8 @@ namespace ApUI::Widgets
     void SetParent(WidgetContainer* parent);
     WidgetContainer* GetParent();
 
+    bool operator==(AWidget* other) const;
+
   protected:
     virtual void _Draw_Impl() = 0;
 
@@ -35,6 +38,7 @@ namespace ApUI::Widgets
 
   protected:
     WidgetContainer *m_parent;
+
     std::string m_widget_id;
     bool m_auto_execute_plugins = true;
 

@@ -53,4 +53,9 @@ namespace ApUI::Widgets
   {
     return m_parent;
   }
+
+  bool AWidget::operator==(AWidget *other) const
+  {
+    return m_widget_id == other->m_widget_id && m_parent == other->m_parent;
+  }
 }
