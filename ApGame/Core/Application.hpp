@@ -4,8 +4,7 @@
 #include <ApWindow/Window.hpp>
 #include <ApWindow/RendererD3D.hpp>
 #include <ApUI/Core/UIManager.hpp>
-#include <ApGame/Panels/Menus/MainMenu.hpp>
-#include <ApGame/Panels/Menus/ScoreMenu.hpp>
+#include "MenuContainer.hpp"
 
 namespace ApGame::Core
 {
@@ -28,8 +27,7 @@ namespace ApGame::Core
     ApUI::Modules::Canvas                  canvas;
 
   private:
-    Panels::Menus::MainMenu m_menu;
-    Panels::Menus::ScoreMenu m_score;
+    MenuContainer m_menu {};
     bool m_running = true;
     bool m_visible = true;
   };

@@ -36,7 +36,7 @@ namespace ApUI::Widgets::InputFields
         nullptr,
         &content[0],
         maxInput,
-        GetSize(), 
+        GetSize(),
         flags,
         TabWasPressedCallback,
         this

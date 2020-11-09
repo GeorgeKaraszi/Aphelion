@@ -32,7 +32,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 namespace ApGame::Core
 {
   Application::Application(HINSTANCE hinst)
-    : m_menu("Main Menu", true), m_score("Score Menu", true)
   {
     window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay");
     renderer  = std::make_unique<ApWindow::RendererD3D>(window->GetMainWnd(), window->GetWidth(), window->GetHeight());
@@ -40,14 +39,16 @@ namespace ApGame::Core
         window->GetMainWnd(),
         renderer->GetDevice(),
         renderer->GetDeviceContext(),
-        window->GetWidth(),
-        window->GetHeight()
+        static_cast<float>(window->GetWidth()),
+        static_cast<float>(window->GetHeight())
     );
 
-    auto *panel = &m_score;
+    renderer->RenderEvent += [uiContainer = uiManager.get()] { uiContainer->Render(); };
+
+    auto *panel = &m_menu;
     auto *io    = &ImGui::GetIO();
-    auto pos    = ImVec2(io->DisplaySize.x/5,  io->DisplaySize.y/5);
-    auto size   = ImVec2(io->DisplaySize.x/2, io->DisplaySize.y/2);
+    auto pos    = ImVec2(io->DisplaySize.x/4,  io->DisplaySize.y/4);
+    auto size   = ImVec2(io->DisplaySize.x/1.5f, io->DisplaySize.y/2);
     panel->SetPosition(pos);
     panel->SetSize(size);
     canvas.AddPanel(*panel);
@@ -59,7 +60,7 @@ namespace ApGame::Core
   {
     if(IsRunning() && window->IsVisible() && !renderer->IsShutDown())
     {
-      renderer->Render([&]() { uiManager->Render(); });
+      renderer->Render();
     }
   }
 
