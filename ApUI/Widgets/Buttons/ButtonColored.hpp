@@ -24,7 +24,6 @@ namespace ApUI::Widgets::Buttons
     std::string  label;
     Types::Color bg_color;
     Types::Color fg_color;
-    ImVec2 size;
     bool enabled;
   };
 }

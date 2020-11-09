@@ -15,8 +15,6 @@ namespace ApUI::Widgets::Buttons
 
   public:
     std::string label;
-    ImVec2 size;
-    bool enabled;
   };
 }
 

@@ -9,8 +9,11 @@ namespace ApUI::Widgets::Buttons
       const Types::Color &fg_color,
       bool enabled
   )
-    : label(label), size(size), bg_color(bg_color), fg_color(fg_color), enabled(enabled)
-  {}
+    : label(label), bg_color(bg_color), fg_color(fg_color), enabled(enabled)
+  {
+    SetSize(size);
+    SetFlags(ImGuiButtonFlags_NoNavFocus);
+  }
 
   void ButtonColored::_Draw_Impl()
   {
@@ -22,7 +25,7 @@ namespace ApUI::Widgets::Buttons
     ImGui::PushStyleColor(ImGuiCol_ButtonActive,  background_color);
     ImGui::PushStyleColor(ImGuiCol_Text,          foreground_color);
 
-    if(ImGui::ButtonEx(label.c_str(), size, ImGuiButtonFlags_NoNavFocus))
+    if(ImGui::ButtonEx(label.c_str(), GetSize(), GetFlags()))
     {
       ClickEvent.Invoke();
     }

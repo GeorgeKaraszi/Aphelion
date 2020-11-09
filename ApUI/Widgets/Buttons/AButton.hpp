@@ -3,10 +3,11 @@
 
 #include <ApTools/Eventing/Event.hpp>
 #include <ApUI/Widgets/AWidget.hpp>
+#include <ApUI/Plugins/ITransformable.hpp>
 
 namespace ApUI::Widgets::Buttons
 {
-  class AButton : public AWidget
+  class AButton : public AWidget, public Plugins::ITransformable
   {
   protected:
     void _Draw_Impl() override = 0;
