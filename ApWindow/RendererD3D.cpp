@@ -82,7 +82,7 @@ namespace ApWindow
     ShutDown();
   }
 
-  HRESULT RendererD3D::Render(const vRendererCallback& callback)
+  HRESULT RendererD3D::Render()
   {
     static float dx_bg_colors[4] = { 0.100f, 0.075f, 0.055f, 0.80f };
 
@@ -93,7 +93,7 @@ namespace ApWindow
 
     m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, dx_bg_colors);
 
-    callback();
+    RenderEvent.Invoke();
 
     return m_SwapChain->Present(m_vsync, 0);
   }

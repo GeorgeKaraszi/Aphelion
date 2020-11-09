@@ -2,6 +2,7 @@
 #define APWINDOW_RENDERERD3D_HPP
 
 #include <ApInclude/pch.hpp>
+#include <ApTools/Eventing/Event.hpp>
 #include <functional>
 
 namespace ApWindow
@@ -21,7 +22,7 @@ namespace ApWindow
     ID3D11DeviceContext  *GetDeviceContext() { return m_DeviceContext; }
     IDXGISwapChain       *GetSwapChain()     { return m_SwapChain; }
 
-    HRESULT Render(const vRendererCallback& callback);
+    HRESULT Render();
 
     [[nodiscard]]
     bool IsShutDown() const;
@@ -30,6 +31,9 @@ namespace ApWindow
 
     void OnWindowResize(int width, int height);
     void ShutDown();
+
+  public:
+    ApTools::Eventing::Event<> RenderEvent;
 
   private:
     bool                   m_IsShutdown        = false;

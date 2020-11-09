@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <ApGame/Core/Application.hpp>
 
 int run_overlay(ApGame::Core::Application& app)
@@ -8,12 +10,15 @@ int run_overlay(ApGame::Core::Application& app)
   {
     app.IsRunning() ? app.Run() : PostQuitMessage(0);
 
+
     // If there are Window messages then process them.
     if(PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ))
     {
       TranslateMessage( &msg );
       DispatchMessage( &msg );
     }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   return (int)msg.wParam;
