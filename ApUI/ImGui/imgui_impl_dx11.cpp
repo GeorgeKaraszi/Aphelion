@@ -566,4 +566,3 @@ void ImGui_ImplDX11_NewFrame()
     if (!g_pFontSampler)
         ImGui_ImplDX11_CreateDeviceObjects();
 }
-    

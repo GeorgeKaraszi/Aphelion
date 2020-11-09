@@ -56,7 +56,7 @@ namespace ApUI::Plugins
     */
     void RemoveAllPlugins()
     {
-      for (auto &plugin : m_plugins)
+      for (IPlugin *plugin : m_plugins)
       {
         delete plugin;
       }
