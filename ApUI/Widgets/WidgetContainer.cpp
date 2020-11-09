@@ -4,6 +4,11 @@
 
 namespace ApUI::Widgets
 {
+  WidgetContainer::~WidgetContainer()
+  {
+    RemoveAllWidgets();
+  }
+
   AWidget *WidgetContainer::operator[](int idx)
   {
     return m_widgets[idx];
@@ -30,10 +35,10 @@ namespace ApUI::Widgets
 
   void WidgetContainer::RemoveAllWidgets()
   {
-    std::for_each(m_widgets.begin(), m_widgets.end(), [](AWidget *widget)
+    for(AWidget *widget : m_widgets)
     {
       delete widget;
-    });
+    }
 
     m_widgets.clear();
   }
