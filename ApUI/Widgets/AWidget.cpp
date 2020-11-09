@@ -15,7 +15,9 @@ namespace ApUI::Widgets
   {
     if(!enabled) return;
 
+    BeginStyle();
     _Draw_Impl();
+    EndStyle();
 
     if(m_auto_execute_plugins)
       ExecutePlugins();

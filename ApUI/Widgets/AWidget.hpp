@@ -3,18 +3,20 @@
 
 #include <string>
 #include <ApUI/Plugins/Pluginable.hpp>
+#include <ApUI/Plugins/DataDispatcher.hpp>
 #include <ApUI/Plugins/IDrawable.hpp>
+#include <ApUI/Plugins/Styleable.hpp>
 #include <ApUI/ImGui/imgui.h>
 #include <ApUI/ImGui/imgui_internal.h>
 
 namespace ApUI::Widgets
 {
   class WidgetContainer;
-  class AWidget : public Plugins::IDrawable, public Plugins::Pluginable
+  class AWidget : public Plugins::IDrawable, public Plugins::Pluginable, public Plugins::Styleable
   {
   public:
     AWidget();
-    virtual void Draw() override;
+    void Draw() override;
 
     void LinkTo(const AWidget &other);
     void Destroy();
@@ -33,7 +35,7 @@ namespace ApUI::Widgets
     virtual void _Draw_Impl() = 0;
 
   public:
-    bool enabled = true;
+    bool enabled   = true;
     bool lineBreak = true;
 
   protected:
