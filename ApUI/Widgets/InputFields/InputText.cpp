@@ -4,12 +4,13 @@
 
 namespace ApUI::Widgets::InputFields
 {
-  static int TabWasPressed(ImGuiInputTextCallbackData *data)
+  static int TabWasPressedCallback(ImGuiInputTextCallbackData *data)
   {
     if(data->EventKey == ImGuiKey_Tab)
     {
-      InputText *input = (InputText*)data->UserData;
+      auto input = (InputText*)data->UserData;
       input->EnterPressedEvent.Invoke(input->content);
+      ImGui::ClearActiveID(); // Clear Focus on current element
     }
 
     return 0;
@@ -30,9 +31,21 @@ namespace ApUI::Widgets::InputFields
     content.resize(maxInput, '\0');
 
     ImGui::PushID(m_widget_id.c_str());
-    bool enterPressed   = ImGui::InputTextEx(label.c_str(), nullptr, &content[0], maxInput, GetSize(), flags, TabWasPressed, this);
+    bool enterPressed = ImGui::InputTextEx(
+        label.c_str(),
+        nullptr,
+        &content[0],
+        maxInput,
+        GetSize(), 
+        flags,
+        TabWasPressedCallback,
+        this
+    );
     ImGui::PopID();
-    content = content.c_str();
+
+    // Ensures when we resize (via .resize/2 or when a user backspaces)
+    // we can clear out everything beyond the null-terminator
+    content = content.c_str(); // NOLINT(readability-redundant-string-cstr)
 
     if (content != previousContent)
     {
