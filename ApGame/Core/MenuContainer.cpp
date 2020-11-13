@@ -2,6 +2,7 @@
 #include <ApUI/Widgets/Buttons/Button.hpp>
 #include <ApUI/Widgets/Columns/Column.hpp>
 #include <ApUI/Widgets/Windows/ChildWindow.hpp>
+#include <ApUI/Widgets/Layout/NewLine.hpp>
 #include <ApInclude/pch.hpp>
 #include "MenuContainer.hpp"
 
@@ -25,6 +26,8 @@ namespace ApGame::Core
       Teams    = &m_group->CreateWidget<ButtonColored>("Teams", size, Color::Yellow, Color::Red);
       Settings = &m_group->CreateWidget<ButtonColored>("Settings", size, Color::Yellow, Color::Red);
       SetActiveItem(Score);
+
+      CreateWidget<Layout::NewLine>();
     }
 
     void SetActiveItem(ApUI::Widgets::Buttons::ButtonColored *selected)
@@ -74,8 +77,11 @@ namespace ApGame::Core
 
   MenuContainer::MenuContainer() : ApUI::Panels::PanelWindow("Main Window")
   {
+    using namespace ApUI::Widgets;
+
     m_menu_bar      = &CreateWidget<MenuBar>();
-    m_body_window   = &CreateWidget<ApUI::Widgets::Windows::ChildWindow>("ChildBody", ImVec2(-FLT_MIN, FLT_MAX));
+    m_body_window   = &CreateWidget<Windows::ChildWindow>("ChildBody", Windows::ApUIWindow_SizeByAvailableSpace);
+
     m_score_body    = &m_body_window->CreateWidget<Contents::ScoreContent>();
     m_stats_body    = &m_body_window->CreateWidget<RenderBody>("Stats Body");
     m_teams_body    = &m_body_window->CreateWidget<RenderBody>("Teams Body");
@@ -96,11 +102,7 @@ namespace ApGame::Core
   void MenuContainer::Update()
   {
     ApUI::Panels::PanelWindow::Update();
-//    auto window = ImGui::GetCurrentWindow();
-    ImVec2 curPos  = ImGui::GetCursorPos();
-    ImVec2 winSize = ImGui::GetWindowSize();
-
-    m_body_window->SetSize(winSize - curPos);
+    m_body_window->SetSize(ImGui::GetWindowSize() - ImGui::GetCursorPos());
   }
 
   void MenuContainer::SetCurrentPanel(ApUI::Widgets::AWidget *next_panel)
