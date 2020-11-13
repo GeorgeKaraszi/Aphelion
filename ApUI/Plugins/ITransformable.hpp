@@ -31,6 +31,11 @@ namespace ApUI::Plugins
       m_flags = flags;
     }
 
+    void AppendFlags(int flags)
+    {
+      m_flags |= flags;
+    }
+
     [[nodiscard]]
     ImVec2 GetPosition() const
     {
