@@ -9,18 +9,24 @@
 
 namespace ApUI::Widgets::Windows
 {
+  enum ResizeWindowFlags { ApUIWindow_NoChange, ApUIWindow_SizeByAvailableSpace };
   class ChildWindow : public AWidget, public WidgetContainer, public Plugins::ITransformable
   {
   public:
-    ChildWindow(std::string name, ImVec2 size, bool boarder = false);
+    explicit ChildWindow(
+        std::string name,
+        ResizeWindowFlags size_flag = ApUIWindow_NoChange,
+        ImVec2 size                 = ImVec2(-FLT_MIN, FLT_MAX)
+    );
 
   protected:
+    void Update() override;
     void _Draw_Impl() override;
 
   public:
     std::string name;
-  private:
-    bool m_boarder = false;
+    ResizeWindowFlags ResizeFlag;
+    bool ShowBoarder = false;
   };
 }
 
