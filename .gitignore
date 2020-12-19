@@ -90,3 +90,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Custom
+api_key.txt
