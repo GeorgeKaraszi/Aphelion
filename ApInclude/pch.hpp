@@ -3,15 +3,20 @@
 
 #include "macros.h"
 
+#ifndef NOMINMAX
+    #define NOMINMAX
+#endif
+
+#ifndef DIRECTINPUT_VERSION
+  #define DIRECTINPUT_VERSION 0x0800
+#endif
+
 #include <Windows.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
-
-#define NOMINMAX
-#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <cassert>
 

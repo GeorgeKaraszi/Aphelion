@@ -16,6 +16,7 @@ namespace ApUI::Modules
     void AddPanel(Panels::APanel &p_panel);
     void RemovePanel(Panels::APanel &p_panel);
     void RemoveAllPanels();
+    void ReplacePanelsWith(Panels::APanel &p_panel);
 
   private:
     std::vector<std::reference_wrapper<Panels::APanel>> m_panels;

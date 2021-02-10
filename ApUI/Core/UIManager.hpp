@@ -30,6 +30,7 @@ namespace ApUI::Core
 
   private:
     static void ApplyStyle();
+    static void LoadFont();
   private:
     Modules::Canvas *m_currentCanvas = nullptr;
   };

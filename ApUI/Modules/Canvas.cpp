@@ -8,6 +8,10 @@ namespace ApUI::Modules
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    static bool demo = true;
+    if(demo)
+      ImGui::ShowDemoWindow(&demo);
+
     for(auto &panel : m_panels)
     {
       panel.get().Draw();
@@ -38,5 +42,11 @@ namespace ApUI::Modules
   void Canvas::RemoveAllPanels()
   {
     m_panels.clear();
+  }
+
+  void Canvas::ReplacePanelsWith(Panels::APanel &p_panel)
+  {
+    RemoveAllPanels();
+    AddPanel(p_panel);
   }
 }

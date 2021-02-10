@@ -27,7 +27,7 @@ namespace ApTools::Eventing
 
   private:
     std::unordered_map<ListenerID, Callback> m_callbacks;
-    ListenerID                               m_next_listener_id;
+    ListenerID                               m_next_listener_id { 1 };
   };
 }
 

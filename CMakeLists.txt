@@ -47,3 +47,8 @@ target_link_libraries(
         ${DirectX_D3D11_LIBRARY}
         ${CONAN_LIBS}
 )
+
+set_target_properties(${EXE_NAME} PROPERTIES LINK_FLAGS "/ignore:4099")
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/api_key.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Roboto-Medium.ttf DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)

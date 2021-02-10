@@ -1,6 +1,6 @@
 #ifndef APGAME_CORE_APPLICATION_HPP
 #define APGAME_CORE_APPLICATION_HPP
-
+#include <ApCore/Core/Network.hpp>
 #include <ApWindow/Window.hpp>
 #include <ApWindow/RendererD3D.hpp>
 #include <ApUI/Core/UIManager.hpp>
@@ -12,6 +12,7 @@ namespace ApGame::Core
   {
   public:
     Application() = delete;
+    Application(const Application &) = delete;
     explicit Application(HINSTANCE hinst);
 
     void Run() const;
@@ -21,13 +22,15 @@ namespace ApGame::Core
 
     static Application* GetApplication();
   public:
+    std::shared_ptr<ApCore::Core::Network> network;
     std::unique_ptr<ApWindow::Window>      window;
     std::unique_ptr<ApWindow::RendererD3D> renderer;
     std::unique_ptr<ApUI::Core::UIManager> uiManager;
     ApUI::Modules::Canvas                  canvas;
 
+
   private:
-    MenuContainer m_menu {};
+    MenuContainer *m_menu;
     bool m_running = true;
     bool m_visible = true;
   };

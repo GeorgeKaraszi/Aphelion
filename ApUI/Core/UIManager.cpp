@@ -1,3 +1,5 @@
+#include <iostream>
+#include <filesystem>
 #include "UIManager.hpp"
 
 namespace ApUI::Core
@@ -11,11 +13,12 @@ namespace ApUI::Core
       )
   {
     ImGui::CreateContext();
-    auto *io = &ImGui::GetIO();
+    auto *io  = &ImGui::GetIO();
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io->DisplaySize = ImVec2(width, height);
     io->IniFilename = nullptr;
     ApplyStyle();
+    LoadFont();
 
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(device, deviceContext);
@@ -105,5 +108,31 @@ namespace ApUI::Core
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+  }
+
+  void UIManager::LoadFont()
+  {
+    auto &io       = ImGui::GetIO();
+    auto ctx       = ImGui::GetCurrentContext();
+    auto font_path = std::filesystem::current_path().append("Roboto-Medium.ttf").string();
+
+    if(std::filesystem::exists(font_path.c_str()))
+    {
+      auto font =  io.Fonts->AddFontFromFileTTF(font_path.c_str(), 24.0f);
+      if(io.Fonts->Build())
+      {
+        io.FontDefault = font;
+        ImGui::SetCurrentFont(font);
+        ctx->FontSize = font->FontSize;
+      }
+      else
+      {
+        std::cout << "Failed to build font!" << std::endl;
+      }
+    }
+    else
+    {
+      std::cout << "Could not find: " << font_path << std::endl;
+    }
   }
 }

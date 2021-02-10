@@ -1,3 +1,5 @@
+#include <fstream>
+#include <iostream>
 #include "Application.hpp"
 
 static ApGame::Core::Application *g_application = nullptr;
@@ -29,11 +31,31 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
+std::string LoadApiKey()
+{
+  std::string api_key;
+  std::ifstream api_key_file("api_key.txt", std::ifstream::in);
+  if(api_key_file.is_open())
+  {
+    std::getline(api_key_file, api_key);
+    boost::remove_erase_if(api_key, boost::is_any_of(" \n"));
+    api_key_file.close();
+  }
+  else
+  {
+    assert(api_key_file.good() && "Could not find DBG API key file(api_key.txt).");
+  }
+
+  return api_key;
+}
+
 namespace ApGame::Core
 {
   Application::Application(HINSTANCE hinst)
   {
-    window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay");
+    g_application = this;
+    network   = std::make_shared<ApCore::Core::Network>(LoadApiKey());
+    window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay", false);
     renderer  = std::make_unique<ApWindow::RendererD3D>(window->GetMainWnd(), window->GetWidth(), window->GetHeight());
     uiManager = std::make_unique<ApUI::Core::UIManager>(
         window->GetMainWnd(),
@@ -45,7 +67,8 @@ namespace ApGame::Core
 
     renderer->RenderEvent += [uiContainer = uiManager.get()] { uiContainer->Render(); };
 
-    auto *panel = &m_menu;
+    m_menu      = new MenuContainer();
+    auto *panel = m_menu;
     auto *io    = &ImGui::GetIO();
     auto pos    = ImVec2(io->DisplaySize.x/4,  io->DisplaySize.y/4);
     auto size   = ImVec2(io->DisplaySize.x/1.5f, io->DisplaySize.y/2);
@@ -53,7 +76,6 @@ namespace ApGame::Core
     panel->SetSize(size);
     canvas.AddPanel(*panel);
     uiManager->SetCanvas(canvas);
-    g_application = this;
   }
 
   void Application::Run() const
@@ -66,7 +88,7 @@ namespace ApGame::Core
 
   bool Application::IsRunning() const
   {
-    return m_running;
+    return m_running && network->IsRunning();
   }
 
   Application *Application::GetApplication()
