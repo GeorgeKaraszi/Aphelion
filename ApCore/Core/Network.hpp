@@ -5,7 +5,6 @@
     #define PIL_USER_AGENT "PIL-OVERLAY-v1.0"
 #endif
 
-
 #include <string>
 #include <ApInclude/macros.h>
 #include <ApCore/Nets/CensusAPI.hpp>
@@ -23,12 +22,13 @@ namespace ApCore::Core
   public:
     Network()               = delete;
     Network(const Network&) = delete;
-    explicit Network(const char* api_key);
+    explicit Network(std::string api_key);
     ~Network();
 
     void AsyncRun();
     void Shutdown();
-
+    [[nodiscard]]
+    bool IsRunning() const { return m_runnable; }
     std::shared_ptr<Nets::WebSocket> GetWebSocket();
     std::shared_ptr<Nets::CensusAPI> GetCensusAPI();
 
@@ -38,10 +38,10 @@ namespace ApCore::Core
 
   protected:
     bool m_runnable = true;
+    net::io_context m_ioc;
 
   private:
     std::string     m_api_key;
-    net::io_context m_ioc;
     tcp::resolver   m_resolver { net::make_strand(m_ioc) };
 
   private:

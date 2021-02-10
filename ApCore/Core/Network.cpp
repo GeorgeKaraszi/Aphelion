@@ -1,4 +1,6 @@
 #include "Network.hpp"
+#include <stdexcept>
+#include <utility>
 
 static ApCore::Core::Network* g_network = nullptr;
 
@@ -6,10 +8,11 @@ namespace ApCore::Core
 {
   Network *Network::GetNetwork()
   {
+    AP_ASSERT(PRESENT_PTR(g_network), "Network has not been initialized")
     return g_network;
   }
 
-  Network::Network(const char* api_key) : m_api_key(api_key)
+  Network::Network(std::string api_key) : m_api_key(std::move(api_key))
   {
     assert(BLANK_PTR(g_network) && "There exists an Instance of ApCore::Core::Network already!");
     m_websocket = std::make_shared<Nets::WebSocket>(this);
@@ -19,7 +22,7 @@ namespace ApCore::Core
 
   Network::~Network()
   {
-    m_ioc.stop();
+    Shutdown();
     m_websocket.reset();
     m_census.reset();
     g_network = nullptr;
@@ -27,14 +30,17 @@ namespace ApCore::Core
 
   void Network::AsyncRun()
   {
-    if(!m_runnable)
-      return;
+    try
+    {
+      if (!m_runnable)
+        return;
 
-    if(m_ioc.stopped())
-      m_ioc.restart();
-
-    m_census->PollQueue();
-    m_ioc.poll_one();
+      m_websocket->DoRead();
+    }
+    catch(...)
+    {
+      std::cout << "Exception in Network Thread!: " << boost::current_exception_diagnostic_information() << std::endl;
+    }
   }
 
   void Network::Shutdown()
