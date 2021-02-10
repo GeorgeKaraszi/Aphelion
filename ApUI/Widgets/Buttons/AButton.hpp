@@ -11,6 +11,14 @@ namespace ApUI::Widgets::Buttons
   {
   protected:
     void _Draw_Impl() override = 0;
+
+    static ImVec2 AutoSizeBtn(const std::string &label, float mul_pad = 4.0f)
+    {
+      const ImGuiStyle& style = ImGui::GetCurrentContext()->Style;
+      auto label_size         = ImGui::CalcTextSize(label.c_str());
+      return ImVec2(label_size.x + style.FramePadding.x * mul_pad, label_size.y + style.FramePadding.y * mul_pad);
+    }
+
   public:
     ApTools::Eventing::Event<> ClickEvent;
   };

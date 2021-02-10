@@ -2,13 +2,11 @@
 
 namespace ApUI::Widgets::Texts
 {
-  Text::Text(std::string text)
-  : DataWidget(m_text),
-    m_text(std::move(text))
+  Text::Text(const std::string &content) : AText(content)
   {}
 
   void Text::_Draw_Impl()
   {
-    ImGui::TextUnformatted(m_text.c_str());
+    ImGui::TextUnformatted(Content.c_str());
   }
 }

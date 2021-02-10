@@ -19,6 +19,16 @@ namespace ApUI::Widgets
     return m_widgets;
   }
 
+  AWidget* WidgetContainer::FindWidget(const std::string &widget_id)
+  {
+    auto found = std::find_if(m_widgets.begin(), m_widgets.end(), [&widget_id](AWidget* widget)
+    {
+      return widget->widget_id == widget_id;
+    });
+
+    return found != m_widgets.end() ? *found : nullptr;
+  }
+
   void WidgetContainer::RemoveWidget(AWidget &target)
   {
     auto found = std::find_if(m_widgets.begin(), m_widgets.end(), [&target](AWidget* widget)

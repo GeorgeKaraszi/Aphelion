@@ -25,19 +25,23 @@ namespace ApUI::Widgets::InputFields
 
   void InputText::_Draw_Impl()
   {
-    int flags =  this->GetFlags() | ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion;
-
     std::string previousContent = content;
     content.resize(maxInput, '\0');
 
-    ImGui::PushID(m_widget_id.c_str());
+    if(left_label)
+    {
+      ImGui::Text("%s", label.c_str());
+      ImGui::SameLine();
+    }
+
+    ImGui::PushID(widget_id.c_str());
     bool enterPressed = ImGui::InputTextEx(
-        label.c_str(),
+        left_label ? "" : label.c_str(),
         nullptr,
         &content[0],
         maxInput,
         GetSize(),
-        flags,
+        GetFlags() | ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion,
         TabWasPressedCallback,
         this
     );

@@ -11,12 +11,12 @@ namespace ApUI::Widgets
     ~WidgetContainer();
     AWidget* operator[](int idx);
     std::vector<AWidget*> &GetWidgets();
+    AWidget *FindWidget(const std::string &widget_id);
     void RemoveWidget(AWidget &target);
     void RemoveAllWidgets();
 
     void GarbageCollect();
     void DrawWidgets();
-
 
     template<typename T, typename ...Args>
     T& CreateWidget(Args&&...args)

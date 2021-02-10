@@ -1,20 +1,20 @@
 #ifndef APUI_WIDGETS_TEXTS_TEXTCOLORED_HPP
 #define APUI_WIDGETS_TEXTS_TEXTCOLORED_HPP
 
-#include <ApUI/Widgets/AWidget.hpp>
+#include "AText.hpp"
 #include <ApUI/Types/Color.hpp>
 
 namespace ApUI::Widgets::Texts
 {
-  class TextColored : public AWidget
+  class TextColored : public AText
   {
   public:
-    TextColored(std::string text, const Types::Color& color);
+    explicit TextColored(const std::string &content, const Types::Color& color = Types::Color::White);
+    void SetValues(std::string content, const Types::Color& color);
   protected:
     void _Draw_Impl() override;
-  private:
-    std::string m_text;
-    Types::Color m_color;
+  public:
+    Types::Color Color;
   };
 }
 #endif //APUI_WIDGETS_TEXTS_TEXTCOLORED_HPP

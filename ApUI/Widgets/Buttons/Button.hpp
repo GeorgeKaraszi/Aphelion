@@ -8,6 +8,7 @@ namespace ApUI::Widgets::Buttons
   class Button : public AButton
   {
   public:
+    Button(const std::string& label, bool enabled = true);
     Button(std::string label, ImVec2 size, bool enabled = true);
 
   protected:

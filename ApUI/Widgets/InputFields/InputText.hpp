@@ -17,7 +17,8 @@ namespace ApUI::Widgets::InputFields
   public:
     std::string content;
     std::string label;
-    int maxInput = 256;
+    int maxInput    = 256;
+    bool left_label = true;
     ApTools::Eventing::Event<std::string> ContentChangedEvent;
     ApTools::Eventing::Event<std::string> EnterPressedEvent;
   };

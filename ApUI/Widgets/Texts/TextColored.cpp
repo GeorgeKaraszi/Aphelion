@@ -1,13 +1,21 @@
 #include "TextColored.hpp"
 
+#include <utility>
+
 namespace ApUI::Widgets::Texts
 {
-  TextColored::TextColored(std::string text, const Types::Color &color)
-  : m_text(std::move(text)), m_color(color)
+  TextColored::TextColored(const std::string &content, const Types::Color &color)
+  : AText(content), Color(color)
   {}
+
+  void TextColored::SetValues(std::string text, const Types::Color &color)
+  {
+    Content = std::move(text);
+    Color   = color;
+  }
 
   void TextColored::_Draw_Impl()
   {
-    ImGui::TextColored(m_color.ToImColor(), "%s", m_text.c_str());
+    ImGui::TextColored(Color.ToImColor(), "%s", Content.c_str());
   }
 }

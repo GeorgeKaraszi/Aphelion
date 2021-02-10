@@ -1,18 +1,16 @@
 #ifndef APUI_WIDGETS_TEXTS_TEXT_HPP
 #define APUI_WIDGETS_TEXTS_TEXT_HPP
 
-#include <ApUI/Widgets/DataWidget.hpp>
+#include "AText.hpp"
 
 namespace ApUI::Widgets::Texts
 {
-  class Text : public DataWidget<std::string>
+  class Text : public AText
   {
   public:
-    Text(std::string text);
+    explicit Text(const std::string &content);
   protected:
     void _Draw_Impl() override;
-  private:
-    std::string m_text;
   };
 }
 

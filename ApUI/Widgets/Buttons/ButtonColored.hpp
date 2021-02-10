@@ -11,6 +11,13 @@ namespace ApUI::Widgets::Buttons
   public:
     ButtonColored(
         const char* label,
+        const Types::Color &bg_color,
+        const Types::Color &fg_color = Types::Color::White,
+        bool enabled = true
+    );
+
+    ButtonColored(
+        const char* label,
         ImVec2 size,
         const Types::Color &bg_color,
         const Types::Color &fg_color = Types::Color::White,

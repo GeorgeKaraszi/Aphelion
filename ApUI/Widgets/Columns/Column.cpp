@@ -9,7 +9,10 @@ namespace ApUI::Widgets::Columns
   {
     auto col_size = m_widgets.size();
 
-    ImGui::Columns(col_size, m_widget_id.c_str(), m_boarder);
+    if(col_size > 1)
+    {
+      ImGui::Columns(col_size, widget_id.c_str(), m_boarder);
+    }
 
     for(int i = 0; i < col_size; i++)
     {
@@ -21,6 +24,9 @@ namespace ApUI::Widgets::Columns
       }
     }
 
-    ImGui::EndColumns();
+    if(col_size > 1)
+    {
+      ImGui::EndColumns();
+    }
   }
 }

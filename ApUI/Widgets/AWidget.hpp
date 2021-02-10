@@ -37,11 +37,10 @@ namespace ApUI::Widgets
   public:
     bool enabled   = true;
     bool lineBreak = true;
+    std::string widget_id;
 
   protected:
     WidgetContainer *m_parent;
-
-    std::string m_widget_id;
     bool m_auto_execute_plugins = true;
 
   private:

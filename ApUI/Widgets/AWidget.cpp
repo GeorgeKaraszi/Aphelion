@@ -8,7 +8,7 @@ namespace ApUI::Widgets
 {
   AWidget::AWidget() : m_parent(nullptr)
   {
-    m_widget_id = "##" + std::to_string(_WIDGET_ID_INCREMENT_++);
+    widget_id = "##" + std::to_string(_WIDGET_ID_INCREMENT_++);
   }
 
   void AWidget::Draw()
@@ -28,7 +28,7 @@ namespace ApUI::Widgets
 
   void AWidget::LinkTo(const AWidget &other)
   {
-    m_widget_id = other.m_widget_id;
+    widget_id = other.widget_id;
   }
 
   void AWidget::Destroy()
@@ -58,6 +58,6 @@ namespace ApUI::Widgets
 
   bool AWidget::operator==(AWidget *other) const
   {
-    return m_widget_id == other->m_widget_id && m_parent == other->m_parent;
+    return widget_id == other->widget_id && m_parent == other->m_parent;
   }
 }

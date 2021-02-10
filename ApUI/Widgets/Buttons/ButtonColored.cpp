@@ -3,6 +3,15 @@
 namespace ApUI::Widgets::Buttons
 {
   ButtonColored::ButtonColored(
+      const char *label,
+      const Types::Color &bg_color,
+      const Types::Color &fg_color,
+      bool enabled
+  )
+    : ButtonColored(label, AutoSizeBtn(label), bg_color, fg_color, enabled)
+  {}
+
+  ButtonColored::ButtonColored(
       const char* label,
       ImVec2 size,
       const Types::Color &bg_color,
