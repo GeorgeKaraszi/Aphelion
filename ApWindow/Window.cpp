@@ -10,8 +10,8 @@ namespace ApWindow
     m_monitor_info = primary_screen ? display.GetPrimary() : display.GetSecondary();
   }
 
-  Window::Window(HINSTANCE inst, WNDPROC lpWndProc, const char *name)
-  : Window(inst, false)
+  Window::Window(HINSTANCE inst, WNDPROC lpWndProc, const char *name, bool primary_screen)
+  : Window(inst, primary_screen)
   {
     m_hwnd = MakeWindow(lpWndProc, name);
   }
@@ -63,7 +63,7 @@ namespace ApWindow
     }
 
     #if DEBUG_MODE
-    auto win_attr = WS_EX_TOPMOST;
+    auto win_attr = 0;//WS_EX_TOPMOST;
     #else
     auto win_attr = WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
     #endif
