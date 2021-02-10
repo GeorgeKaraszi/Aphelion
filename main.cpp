@@ -1,11 +1,22 @@
-#include <iostream>
 #include <thread>
 #include <chrono>
 #include <ApGame/Core/Application.hpp>
 
+const static auto sleep_time = std::chrono::milliseconds(1);
+
+void NetworkThread(ApGame::Core::Application *app)
+{
+  while (PRESENT_PTR(app) && app->IsRunning())
+  {
+    app->network->AsyncRun();
+    std::this_thread::sleep_for(sleep_time);
+  }
+}
+
 int run_overlay(ApGame::Core::Application& app)
 {
   MSG msg = { nullptr };
+
   while(msg.message != WM_QUIT)
   {
     app.IsRunning() ? app.Run() : PostQuitMessage(0);
@@ -18,7 +29,7 @@ int run_overlay(ApGame::Core::Application& app)
       DispatchMessage( &msg );
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(sleep_time);
   }
 
   return (int)msg.wParam;
@@ -30,6 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   UNREFERENCED_PARAMETER(lpCmdLine);
 
   ApGame::Core::Application app(hInstance);
+  std::thread(NetworkThread, &app).detach();
   run_overlay(app);
 
   return 0;
