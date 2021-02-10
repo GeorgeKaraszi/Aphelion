@@ -3,7 +3,7 @@
 #include <ApUI/Widgets/Columns/Column.hpp>
 #include <ApUI/Widgets/Windows/ChildWindow.hpp>
 #include <ApUI/Widgets/Layout/NewLine.hpp>
-#include <ApInclude/pch.hpp>
+#include <ApCore/Planetside/Team.hpp>
 #include "MenuContainer.hpp"
 
 #define SET_ACTIVE(body, menu_item) SetCurrentPanel(body); m_menu_bar->SetActiveItem(menu_item);
@@ -75,7 +75,8 @@ namespace ApGame::Core
     }
   };
 
-  MenuContainer::MenuContainer() : ApUI::Panels::PanelWindow("Main Window")
+  MenuContainer::MenuContainer()
+  : ApUI::Panels::PanelWindow("Main Window")
   {
     using namespace ApUI::Widgets;
 
@@ -85,8 +86,9 @@ namespace ApGame::Core
     m_score_body    = &m_body_window->CreateWidget<Contents::ScoreContent>();
     m_stats_body    = &m_body_window->CreateWidget<RenderBody>("Stats Body");
     m_teams_body    = &m_body_window->CreateWidget<RenderBody>("Teams Body");
-    m_settings_body = &m_body_window->CreateWidget<RenderBody>("Settings Body");
+    m_settings_body = &m_body_window->CreateWidget<Contents::SettingsContent>();
 
+    m_score_body->enabled    = false;
     m_stats_body->enabled    = false;
     m_teams_body->enabled    = false;
     m_settings_body->enabled = false;
@@ -96,7 +98,17 @@ namespace ApGame::Core
     m_menu_bar->Teams->ClickEvent    += [&] { SET_ACTIVE(m_teams_body, m_menu_bar->Teams) };
     m_menu_bar->Settings->ClickEvent += [&] { SET_ACTIVE(m_settings_body, m_menu_bar->Settings) };
 
-    SetCurrentPanel(m_score_body);
+    m_settings_body->TeamSizeChangedEvent += [&](int size) {
+      m_score_body->TeamManager.SetSize(size);
+    };
+
+    m_settings_body->TeamAddedEvent += [&](int idx, const std::string &tag) {
+      m_score_body->TeamManager.RegisterTeam(idx, tag);
+    };
+
+//    SET_ACTIVE(m_settings_body, m_menu_bar->Settings)
+
+    SET_ACTIVE(m_score_body, m_menu_bar->Score)
   }
 
   void MenuContainer::Update()

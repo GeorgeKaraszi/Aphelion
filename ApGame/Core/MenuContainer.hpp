@@ -5,7 +5,8 @@
 #include <ApUI/Widgets/AWidget.hpp>
 #include <ApUI/Panels/PanelWindow.hpp>
 #include <ApUI/Widgets/Windows/ChildWindow.hpp>
-#include <ApGame/Contents//ScoreContent.hpp>
+#include <ApGame/Contents/ScoreContent.hpp>
+#include <ApGame/Contents/SettingsContent.hpp>
 
 #pragma comment(lib, "ApUI.lib")
 namespace ApGame::Core
@@ -25,13 +26,12 @@ namespace ApGame::Core
   private:
     MenuBar *m_menu_bar;
     ApUI::Widgets::Windows::ChildWindow *m_body_window;
-    Contents::ScoreContent *m_score_body;
-//    ApUI::Widgets::AWidget *m_score_body;
-    ApUI::Widgets::AWidget *m_stats_body;
-    ApUI::Widgets::AWidget *m_teams_body;
-    ApUI::Widgets::AWidget *m_settings_body;
+    Contents::ScoreContent      *m_score_body    = nullptr;
+    Contents::SettingsContent   *m_settings_body = nullptr;
+    ApUI::Widgets::AWidget      *m_stats_body    = nullptr;
+    ApUI::Widgets::AWidget *m_teams_body         = nullptr;
     ApUI::Widgets::AWidget *m_selected_menu_item = nullptr;
-    ApUI::Widgets::AWidget *m_current_body = nullptr;
+    ApUI::Widgets::AWidget *m_current_body       = nullptr;
   };
 }
 

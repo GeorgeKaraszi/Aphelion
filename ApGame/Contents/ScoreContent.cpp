@@ -1,46 +1,68 @@
 #include "ScoreContent.hpp"
-#include <ApUI/Widgets/Buttons/ButtonColored.hpp>
+#include <ApInclude/string_helper.hpp>
+#include <ApUI/Widgets/Layout/Dummy.hpp>
+#include <ApUI/Widgets/Layout/Separator.hpp>
+#include <ApUI/Widgets/Layout/NewLine.hpp>
+
+using namespace ApCore;
 
 namespace ApGame::Contents
 {
 
-  ScoreContent::ScoreContent()
+  ScoreContent::ScoreContent() : TeamManager(2)
   {
-    using namespace ApUI::Types;
+    TeamManager.RegisterTeam(0, "fooi");
+    TeamManager.RegisterTeam(1, "twc2");
+  }
+
+  void ScoreContent::_Draw_Impl()
+  {
+    using namespace ApUI;
     using namespace ApUI::Widgets;
     using namespace ApUI::Plugins;
+    auto col_flags = ImGuiTableColumnFlags_WidthStretch;
+    auto tbl_flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedSame;
 
+    DrawWidgets();
+    Layout::Dummy(ImVec2(-FLT_MIN, 25.0f)).Draw();
 
-    TeamDataTemplate team_1 = {
-        .name         = "Test",
-        .tag          = "TST",
-        .empire_color = Color::Faction_TR,
-        .players      = { "Big", "And", "Dumb", "Frog" }
-    };
-
-    TeamDataTemplate team_2 = {
-        .name         = "Other Test",
-        .tag          = "TST2",
-        .empire_color = Color::Faction_VS,
-        .players      = { "Player 1", "Player 2", "Player 3" }
-    };
-
-    m_teams.push_back(team_1);
-    m_teams.push_back(team_2);
-
-
-    m_team_header = &CreateWidget<Columns::Column>();
-    m_team_score  = &CreateWidget<Columns::Column>();
-
-    for(const auto &team : m_teams)
+    for(size_t i = 0; i < TeamManager.size(); i++)
     {
-      std::string header = "[" + team.tag + "] " + team.name;
-      m_team_header->CreateWidget<Buttons::ButtonColored>(header.c_str(), ImVec2(-FLT_MIN, 30.0f), team.empire_color);
-      auto *body = &m_team_score->CreateWidget<Layout::Group>();
-      for(const auto &player : team.players)
+      if(BLANK_PTR(TeamManager[i])) continue;
+
+      auto team      = TeamManager[i];
+      auto table     = Tables::Table(tbl_flags, col_flags);
+      auto color     = team->EmpireColor();
+      auto color_vec = color.ToImVec4();
+      table.AddStyle(ImGuiCol_TableHeaderBg, color_vec);
+      table.AddStyle(ImGuiCol_HeaderActive,  color_vec);
+      table.AddStyle(ImGuiCol_HeaderHovered, color_vec);
+      table.AddColumns({"Name", "Score", "Kills", "Deaths", "KD"});
+
+
+
+      if(!team->LoadingTeam)
       {
-        auto btn = &body->CreateWidget<Buttons::ButtonColored>(player.c_str(), ImVec2(-FLT_MIN, 30.0f), team.empire_color);
-        btn->SetFlags(ImGuiButtonFlags_AlignTextBaseLine);
+        for (const auto &player : *team)
+        {
+          auto &row = table.CreateRow(player->uuid);
+          row["Name"].SetValues(player->player_name, color);
+          row["Score"].SetValues(std::to_string(player->score), player->ScoreColor());
+          row["Kills"].SetValues(std::to_string(player->kill_count), color);
+          row["Deaths"].SetValues(std::to_string(player->death_count), color);
+          row["KD"].SetValues(to_string(player->KillDeathAverage(), "%.2f"), player->KDColor());
+        }
+      }
+
+      Texts::TextColored(team->TagName, team->EmpireColor()).Draw();
+      table.Draw();
+
+      if((i+1) < TeamManager.size())
+      {
+        auto new_line = Layout::NewLine();
+        new_line.Draw();
+        Layout::Separator().Draw();
+        new_line.Draw();
       }
     }
   }

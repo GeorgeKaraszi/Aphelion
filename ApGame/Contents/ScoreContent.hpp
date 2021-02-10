@@ -2,28 +2,30 @@
 #define APGAME_CONTENTS_SCORECONTENT_HPP
 
 #include <ApUI/Widgets/Layout/Group.hpp>
-#include <ApUI/Widgets/Columns/Column.hpp>
+#include <ApUI/Widgets/Tables/Table.hpp>
 #include <ApUI/Types/Color.hpp>
+#include <ApCore/Planetside/Team.hpp>
+#include <ApCore/Core/TeamManager.hpp>
 
 namespace ApGame::Contents
 {
   class ScoreContent : public ApUI::Widgets::Layout::Group
   {
-  public:
-    struct TeamDataTemplate
-    {
-      std::string name;
-      std::string tag;
-      ApUI::Types::Color empire_color;
-      std::vector<std::string> players;
-    };
+    using PS_TEAM_PTR = std::shared_ptr<ApCore::Planetside::Team>;
+    using UI_N_TEAM   = std::pair<ApUI::Widgets::Layout::Group*, PS_TEAM_PTR>;
   public:
     ScoreContent();
 
+//    void ResizeTeams(int size);
+//    void RegisterTeam(int idx, const std::string &tag);
+
   private:
-    ApUI::Widgets::Columns::Column *m_team_header;
-    ApUI::Widgets::Columns::Column *m_team_score;
-    std::vector<TeamDataTemplate> m_teams;
+//    void AddTeam(int idx, const std::string &tag);
+    void _Draw_Impl() override;
+//    static void RemoveTeam(PS_TEAM_PTR team);
+
+  public:
+    ApCore::Core::TeamManager TeamManager;
   };
 }
 
