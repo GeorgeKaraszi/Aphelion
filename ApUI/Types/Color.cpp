@@ -1,4 +1,5 @@
 #pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-prefer-member-initializer"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 #include "Color.hpp"
 

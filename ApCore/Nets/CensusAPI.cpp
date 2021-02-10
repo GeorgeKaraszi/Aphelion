@@ -1,5 +1,7 @@
 #include "CensusAPI.hpp"
 #include <ApCore/Core/Network.hpp>
+#include <utility>
+#include <iostream>
 
 namespace ApCore::Nets
 {
@@ -7,6 +9,11 @@ namespace ApCore::Nets
   {
     std::string outfit_lookup_schema = R"(
       ?alias_lower=%s
+      &c:join=character
+        ^on:leader_character_id
+        ^to:character_id
+        ^inject_at:outfits_faction
+        ^show:faction_id
       &c:join=outfit_member
       ^inject_at:members
       ^list:1
@@ -28,17 +35,28 @@ namespace ApCore::Nets
 
     // Strip out all the nice looking whitespace and new lines displayed in the string literal.
     boost::remove_erase_if(outfit_lookup_schema, boost::is_any_of(" \n"));
-    m_outfit_lookup_schema = outfit_lookup_schema;
+    m_outfit_lookup_schema = std::move(outfit_lookup_schema);
   }
 
-  void CensusAPI::PollQueue()
+  JSON CensusAPI::GetOutfitRoster(const std::string& outfit_tag)
   {
-    if(m_queue.empty())
-      return;
+    char request[512];
+    auto lc_tag = boost::to_lower_copy(outfit_tag);
+    sprintf_s(request, 512, m_outfit_lookup_schema.c_str(), lc_tag.c_str());
 
-    auto uri      = m_queue.front().first;
-    auto callback = m_queue.front().second;
-    auto stream   = beast::tcp_stream(m_network->GenerateIOC());
+    auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, "/get/ps2/outfit", request);
+    return FetchHttpData(uri);
+  }
+
+  JSON CensusAPI::GetImageData(const std::string_view &image_path)
+  {
+    auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, image_path.data());
+    return FetchHttpData(uri);
+  }
+
+  JSON CensusAPI::FetchHttpData(const ApCore::Modules::Uri &uri)
+  {
+    auto stream   = beast::tcp_stream(net::make_strand(m_ioc));
     http::request<http::string_body> req = { http::verb::get, uri.Request, 11 };
     http::response<http::string_body> res;
     beast::flat_buffer buffer;
@@ -51,8 +69,6 @@ namespace ApCore::Nets
 
       // TODO: LOG and deal with errors from HTTP stream
       stream.socket().shutdown(tcp::socket::shutdown_both, ec);
-      m_queue.pop();
-
       return true;
     };
 
@@ -63,35 +79,16 @@ namespace ApCore::Nets
 
     http::write(stream, req, ec);
 
-    if(error_handle("PollQueue::http::write")) return;
+    if(error_handle("PollQueue::http::write")) return JSON();
 
     http::read(stream, buffer, res, ec);
 
-    if(error_handle("PollQueue::http::read")) return;
+    if(error_handle("PollQueue::http::read")) return JSON();
 
     stream.socket().shutdown(tcp::socket::shutdown_both, ec);
-    callback->Invoke(JSON::parse(res.body()));
-    m_queue.pop();
+    auto parsed_body = JSON::parse(res.body());
+
+    return JSON::parse(res.body());
   }
 
-  void CensusAPI::QueueOutfitRoster(const std::string& outfit_tag)
-  {
-    char request[512];
-    auto lc_tag = boost::to_lower_copy(outfit_tag);
-    sprintf_s(request, 512, m_outfit_lookup_schema.c_str(), lc_tag.c_str());
-
-    auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, "/get/ps2/outfit", request);
-    AddToQueue(uri, &OutfitRosterEvent);
-  }
-
-  void CensusAPI::QueueImageData(const std::string_view &image_path)
-  {
-    auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, image_path.data());
-    AddToQueue(uri, &ImageDataEvent);
-  }
-
-  void CensusAPI::AddToQueue(ApCore::Modules::Uri &uri, CALLBACK_EVENT *callback)
-  {
-    m_queue.push(std::make_pair(uri, callback));
-  }
 }

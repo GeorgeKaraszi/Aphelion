@@ -7,6 +7,7 @@ namespace ApUI::Types
   struct Color
   {
     Color(int p_r = 255, int p_g = 255, int p_b = 255, int p_a = 255);
+    Color(const Color&) = default;
     explicit Color(ImVec4& im_color);
     explicit Color(ImColor& im_color);
 

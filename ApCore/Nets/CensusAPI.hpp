@@ -14,24 +14,19 @@ namespace ApCore::Nets
 {
   class CensusAPI
   {
-    using CALLBACK_EVENT = ApTools::Eventing::Event<const JSON&>;
+    using CALLBACK_FN = std::function<bool(const JSON&)>;
   public:
     explicit CensusAPI(ApCore::Core::Network *network);
-    void PollQueue();
-    void QueueOutfitRoster(const std::string& outfit_tag);
-    void QueueImageData(const std::string_view &image_path);
+    JSON GetOutfitRoster(const std::string& outfit_tag);
+    JSON GetImageData(const std::string_view &image_path);
 
   private:
-    void AddToQueue(ApCore::Modules::Uri &uri, CALLBACK_EVENT *callback);
-
-  public:
-    CALLBACK_EVENT OutfitRosterEvent;
-    CALLBACK_EVENT ImageDataEvent;
+    JSON FetchHttpData(const ApCore::Modules::Uri &uri);
 
   private:
     ApCore::Core::Network *m_network;
+    net::io_context m_ioc;
     std::string m_outfit_lookup_schema;
-    std::queue<std::pair<ApCore::Modules::Uri, CALLBACK_EVENT*>> m_queue;
   };
 }
 
