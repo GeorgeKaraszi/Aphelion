@@ -143,8 +143,8 @@ void seed_items(ApData::Sql::Models::Item &item_model, ApCore::Nets::CensusAPI *
   do {
     std::string census_query = format_string(census_template, next_set);
     auto item_data           = census->GetCensusQuery("/get/ps2:v2/item", census_query);
-    next_set                += 5000;
     returned                 = item_data.contains("returned") ? item_data["returned"].get<int>() : 0;
+    next_set                += returned;
 
     if(!item_data.contains("item_list") || !item_data["item_list"].is_array())
     {
@@ -180,7 +180,6 @@ void seed_items(ApData::Sql::Models::Item &item_model, ApCore::Nets::CensusAPI *
       item_model.CreateRecord();
     }
   } while(returned == 5000);
-
 }
 
 namespace ApData::Sql::DBSeed

@@ -62,7 +62,7 @@ namespace ApData::Sql::Models
           TableName.c_str(),
           ExistsConditional().c_str()
       );
-      
+
       return db.execAndGet(query).getInt() > 0;
     }
 
