@@ -1,6 +1,8 @@
 #include <thread>
 #include <chrono>
 #include <ApGame/Core/Application.hpp>
+#include <ApData/Sql/Database.hpp>
+#include <ApData/Sql/DbSeed.hpp>
 
 const static auto sleep_time = std::chrono::milliseconds(1);
 
@@ -41,6 +43,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   UNREFERENCED_PARAMETER(lpCmdLine);
 
   ApGame::Core::Application app(hInstance);
+
+  ApData::Sql::Database db;
+  ApData::Sql::DBSeed::InitializeTables(db.Get(), app.network->GetCensusAPI().get());
+
   std::thread(NetworkThread, &app).detach();
   run_overlay(app);
 

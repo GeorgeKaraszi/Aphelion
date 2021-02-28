@@ -2,7 +2,7 @@
 boost/1.74.0
 openssl/1.1.1i
 nlohmann_json/3.9.1
-sqlite3/3.34.1
+sqlitecpp/3.1.1
 
 [generators]
 cmake
@@ -10,3 +10,4 @@ cmake
 [options]
 boost:shared=False
 openssl:shared=False
+sqlitecpp:shared=False

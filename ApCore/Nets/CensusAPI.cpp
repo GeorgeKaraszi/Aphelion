@@ -54,6 +54,12 @@ namespace ApCore::Nets
     return FetchHttpData(uri);
   }
 
+  JSON CensusAPI::GetCensusQuery(const std::string_view &census_path, const std::string_view &query)
+  {
+    auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, census_path.data(), query.data());
+    return FetchHttpData(uri);
+  }
+
   JSON CensusAPI::FetchHttpData(const ApCore::Modules::Uri &uri)
   {
     auto stream   = beast::tcp_stream(net::make_strand(m_ioc));
@@ -86,9 +92,10 @@ namespace ApCore::Nets
     if(error_handle("PollQueue::http::read")) return JSON();
 
     stream.socket().shutdown(tcp::socket::shutdown_both, ec);
-    auto parsed_body = JSON::parse(res.body());
 
-    return JSON::parse(res.body());
+    auto parsed_body = JSON::parse(res.body(), nullptr, false, true);
+
+    return parsed_body;
   }
 
 }

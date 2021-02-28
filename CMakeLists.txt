@@ -34,6 +34,7 @@ add_subdirectory(ApWindow)
 add_subdirectory(ApUI)
 add_subdirectory(ApCore)
 add_subdirectory(ApGame)
+add_subdirectory(ApData)
 
 file(GLOB MAIN_FILES "*.h" "*.hpp" "*.cpp" "*.rc")
 add_executable(${EXE_NAME} WIN32 ${MAIN_FILES})
@@ -44,6 +45,7 @@ target_link_libraries(
         ApUI
         ApGame
         ApCore
+        ApData
         ${DirectX_D3D11_LIBRARY}
         ${CONAN_LIBS}
 )

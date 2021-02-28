@@ -19,6 +19,7 @@ namespace ApCore::Nets
     explicit CensusAPI(ApCore::Core::Network *network);
     JSON GetOutfitRoster(const std::string& outfit_tag);
     JSON GetImageData(const std::string_view &image_path);
+    JSON GetCensusQuery(const std::string_view& census_path, const std::string_view& query = "");
 
   private:
     JSON FetchHttpData(const ApCore::Modules::Uri &uri);
