@@ -28,7 +28,7 @@ void seed_loadouts(ApData::Sql::Models::Loadout &loadout_model)
       { 18, 21, 23, 1,  "Max" }
   };
 
-  for(auto data : loadout_data)
+  for(const auto& data : loadout_data)
   {
     loadout_model.Data = data;
     loadout_model.CreateRecord();
@@ -122,7 +122,7 @@ void seed_item_categories(ApData::Sql::Models::ItemCategory &item_cat_model)
       {82, 215, "Colossus Rear Left Weapon"}
   };
 
-  for(auto data : item_category_data)
+  for(const auto& data : item_category_data)
   {
     item_cat_model.Data = data;
     item_cat_model.CreateRecord();
