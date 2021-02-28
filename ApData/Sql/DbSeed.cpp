@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ApInclude/string_helper.hpp>
 #include "DbSeed.hpp"
 #include "Models/Loadout.hpp"
@@ -130,42 +131,61 @@ void seed_item_categories(ApData::Sql::Models::ItemCategory &item_cat_model)
 
 void seed_items(ApData::Sql::Models::Item &item_model, ApCore::Nets::CensusAPI *census)
 {
-  auto item_data = census->GetCensusQuery(
-      "/get/ps2:v2/item",
-      "?c:join=weapon&c:show=item_id,item_category_id,is_vehicle_weapon,name.en,faction_id,image_path&c:limit=50000"
-  );
+  int returned                = 0;
+  unsigned long next_set      = 0;
+  const char* census_template =
+      "?c:join=weapon"\
+      "&c:show=item_id,name.en,is_vehicle_weapon,item_category_id,faction_id,image_path"\
+      "&c:has=item_category_id"\
+      "&c:limit=5000"\
+      "&c:start=%lu";
 
-  if(!item_data.contains("item_list") || !item_data["item_list"].is_array())
-  {
-    std::cout << "Error couldn't resolve Census Item data!: " << std::endl << item_data.dump() << std::endl;
-    throw std::exception();
-  }
+  do {
+    std::string census_query = format_string(census_template, next_set);
+    auto item_data           = census->GetCensusQuery("/get/ps2:v2/item", census_query);
+    next_set                += 5000;
+    returned                 = item_data.contains("returned") ? item_data["returned"].get<int>() : 0;
 
-  for(auto item : item_data["item_list"])
-  {
-   try
-   {
-     item_model.Data.item_id           = std::stoi(item["item_id"].get<std::string>());
-     item_model.Data.item_category_id  = std::stoi(item["item_category_id"].get<std::string>());
-     item_model.Data.faction_id        = std::stoi(item["faction_id"].get<std::string>());
-     item_model.Data.is_vehicle_weapon = item["is_vehicle_weapon"].get<std::string>() != "0";
-     item["image_path"].get_to(item_model.Data.image_path);
-     item["name"]["en"].get_to(item_model.Data.name);
-   }
-   catch(...)
-   {
-     std::cout << "JSON Error: " << boost::current_exception_diagnostic_information() << "\t>json: " << item.dump() << std::endl;
-     continue;
-   }
+    if(!item_data.contains("item_list") || !item_data["item_list"].is_array())
+    {
+      std::cout << "Error couldn't resolve Census Item data!: " << std::endl << item_data.dump() << std::endl;
+      break;
+    }
 
-    item_model.CreateRecord();
-  }
+    for(auto item : item_data["item_list"])
+    {
+     try
+     {
+       item_model.Data.item_id           = std::stoi(item["item_id"].get<std::string>());
+       item_model.Data.item_category_id  = std::stoi(item["item_category_id"].get<std::string>());
+       item_model.Data.is_vehicle_weapon = item["is_vehicle_weapon"].get<std::string>() != "0";
+
+       if(item["faction_id"].is_string())
+       {
+         item_model.Data.faction_id = std::stoi(item["faction_id"].get<std::string>());
+       }
+       else
+       {
+         item_model.Data.faction_id = 0;
+       }
+
+       item["image_path"].get_to(item_model.Data.image_path);
+       item["name"]["en"].get_to(item_model.Data.name);
+     }
+     catch(...)
+     {
+       continue;
+     }
+
+      item_model.CreateRecord();
+    }
+  } while(returned == 5000);
 
 }
 
 namespace ApData::Sql::DBSeed
 {
-  void InitializeTables(SQLite::Database &db, ApCore::Nets::CensusAPI *census)
+  void InitializeTables(ApData::Sql::Database &db, ApCore::Nets::CensusAPI *census)
   {
     ApData::Sql::Models::Item         items_model(db);
     ApData::Sql::Models::ItemCategory item_cat_model(db);

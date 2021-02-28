@@ -45,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   ApGame::Core::Application app(hInstance);
 
   ApData::Sql::Database db;
-  ApData::Sql::DBSeed::InitializeTables(db.Get(), app.network->GetCensusAPI().get());
+  ApData::Sql::DBSeed::InitializeTables(db, app.network->GetCensusAPI().get());
 
   std::thread(NetworkThread, &app).detach();
   run_overlay(app);
