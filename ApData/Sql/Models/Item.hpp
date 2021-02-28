@@ -7,7 +7,6 @@ namespace ApData::Sql::Models
 {
   class Item : public AModel
   {
-    using AModel::AModel;
   public:
     struct TableData
     {
@@ -21,8 +20,8 @@ namespace ApData::Sql::Models
     };
 
   public:
-    [[nodiscard]]
-    std::string TableName() const override { return "items"; }
+    Item(const Item&) = default;
+    explicit Item(ApData::Sql::Database &database) : AModel(database, "items") {}
 
   protected:
     std::string TableSchema() override {
@@ -42,6 +41,7 @@ namespace ApData::Sql::Models
     }
 
     std::string RecordInsertQuery() override {
+      boost::replace_all(Data.name, "'", "''");
       return format_string(
           "INSERT INTO items(item_id, item_category_id, faction_id, is_vehicle_weapon, image_path, name) "\
           "VALUES (%i, %i, %i, %i, '%s', '%s')",
@@ -55,7 +55,9 @@ namespace ApData::Sql::Models
     }
 
     std::string ExistsConditional() override {
-      return format_string("item_id = %i AND name = '%s'", Data.item_id, Data.name.c_str());
+      std::string name = Data.name;
+      boost::replace_all(name, "'", "''");
+      return format_string("item_id = %i AND name = '%s'", Data.item_id, name.c_str());
     }
 
   public:

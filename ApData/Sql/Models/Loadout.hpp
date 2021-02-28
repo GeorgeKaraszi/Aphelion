@@ -18,8 +18,9 @@ namespace ApData::Sql::Models
     };
 
   public:
-    [[nodiscard]]
-    std::string TableName() const override { return "loadouts"; }
+    Loadout(const Loadout&) = default;
+    explicit Loadout(ApData::Sql::Database &database) : AModel(database, "loadouts")
+    {}
 
   protected:
     std::string TableSchema() override {
@@ -37,6 +38,7 @@ namespace ApData::Sql::Models
     }
 
     std::string RecordInsertQuery() override {
+      boost::replace_all(Data.name, "'", "''");
       return format_string(
           "INSERT INTO loadouts(loadout_id, profile_id, faction_id, name) VALUES (%i, %i, %i, '%s')",
           Data.loadout_id,
@@ -47,11 +49,13 @@ namespace ApData::Sql::Models
     }
 
     std::string ExistsConditional() override {
+      auto name = Data.name;
+      boost::replace_all(name, "'", "''");
       return format_string(
           "faction_id = %i AND profile_id = %i AND name = '%s'",
           Data.faction_id,
           Data.profile_id,
-          Data.name.c_str()
+          name.c_str()
       );
     }
   public:

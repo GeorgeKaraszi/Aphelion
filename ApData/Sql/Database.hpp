@@ -1,12 +1,11 @@
 #ifndef APDATA_SQL_DATABASE_HPP
 #define APDATA_SQL_DATABASE_HPP
 
-#include <ApInclude/pch.hpp>
 #include <SQLiteCpp/SQLiteCpp.h>
 
 namespace ApData::Sql
 {
-  class Database
+  class Database : public SQLite::Database
   {
   public:
     explicit Database(
@@ -14,11 +13,8 @@ namespace ApData::Sql
         int db_flags = SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
     );
 
-    SQLite::Database &Get();
+    Database &Get();
     static Database* GetDatabase();
-
-  private:
-    SQLite::Database db;
   };
 }
 

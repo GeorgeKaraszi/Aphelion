@@ -18,8 +18,9 @@ namespace ApData::Sql::Models
     };
 
   public:
-    [[nodiscard]]
-    std::string TableName() const override { return "item_categories"; }
+    ItemCategory(const ItemCategory&) = default;
+    explicit ItemCategory(ApData::Sql::Database &database) : AModel(database, "item_categories")
+    {}
 
   protected:
     std::string TableSchema() override {
@@ -34,6 +35,7 @@ namespace ApData::Sql::Models
     }
 
     std::string RecordInsertQuery() override {
+      boost::replace_all(Data.name, "'", "''");
       return format_string(
           "INSERT INTO item_categories(item_category_id, name) VALUES (%i, '%s')",
           Data.item_category_id,
@@ -42,7 +44,9 @@ namespace ApData::Sql::Models
     }
 
     std::string ExistsConditional() override {
-      return format_string("name = '%s'", Data.name.c_str());
+      auto name = Data.name;
+      boost::replace_all(name, "'", "''");
+      return format_string("name = '%s'", name.c_str());
     }
 
   public:

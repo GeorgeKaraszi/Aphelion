@@ -3,6 +3,7 @@
 
 #include <ApInclude/string_helper.hpp>
 #include <ApData/Sql/Database.hpp>
+#include <utility>
 
 namespace ApData::Sql::Models
 {
@@ -11,35 +12,34 @@ namespace ApData::Sql::Models
   public:
     AModel()              = delete;
     AModel(const AModel&) = default;
-    explicit AModel(SQLite::Database &database) : db(database)
+    explicit AModel(ApData::Sql::Database &database, const std::string& tbl_name)
+    : db(database), TableName(tbl_name)
     {};
-
-    [[nodiscard]]
-    virtual std::string TableName() const = 0;
 
     bool TableExists()
     {
-      return db.tableExists(TableName());
+      return db.tableExists(TableName);
     }
 
-    int CreateTable()
+    bool CreateTable()
     {
       if(TableExists())
       {
-        return 0;
+        return false;
       }
 
-      return db.exec(TableSchema());
+      db.exec(TableSchema());
+      return db.getErrorCode() == 0;
     }
 
     int DropTable()
     {
-      if(!db.tableExists(TableName()))
+      if(!TableExists())
       {
         return 0;
       }
 
-      auto drop_tbl = format_string("DROP TABLE %s", TableName().c_str());
+      auto drop_tbl = format_string("DROP TABLE %s", TableName.c_str());
       return db.exec(drop_tbl);
     }
 
@@ -56,12 +56,13 @@ namespace ApData::Sql::Models
 
     virtual bool Exists()
     {
+      auto conditional = ExistsConditional();
       std::string query = format_string(
           "SELECT COUNT(*) FROM %s WHERE %s LIMIT 1",
-          TableName().c_str(),
+          TableName.c_str(),
           ExistsConditional().c_str()
       );
-
+      
       return db.execAndGet(query).getInt() > 0;
     }
 
@@ -70,8 +71,11 @@ namespace ApData::Sql::Models
     virtual std::string RecordInsertQuery() = 0;
     virtual std::string ExistsConditional() = 0;
 
+  public:
+    const std::string TableName;
+
   protected:
-    SQLite::Database &db;
+    ApData::Sql::Database &db;
   };
 }
 
