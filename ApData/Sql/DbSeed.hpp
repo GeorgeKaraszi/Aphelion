@@ -6,6 +6,17 @@
 
 namespace ApData::Sql::DBSeed
 {
-  void InitializeTables(ApData::Sql::Database &db, ApCore::Nets::CensusAPI *census);
+  using ReporterCallback = std::function<void(std::string, bool error)>;
+
+  void InitializeTables(
+      ApData::Sql::Database& db,
+      const std::shared_ptr<ApCore::Nets::CensusAPI>& census
+  );
+
+  void InitializeTables(
+      ApData::Sql::Database& db,
+      const std::shared_ptr<ApCore::Nets::CensusAPI>& census,
+      const ReporterCallback &reporter
+  );
 }
 #endif //APDATA_SQL_DBSEED_HPP

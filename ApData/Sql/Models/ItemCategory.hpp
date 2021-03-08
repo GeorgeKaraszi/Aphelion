@@ -12,7 +12,6 @@ namespace ApData::Sql::Models
   public:
     struct TableData
     {
-      int id;
       int item_category_id;
       std::string name;
     };

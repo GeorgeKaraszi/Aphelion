@@ -10,11 +10,11 @@ namespace ApData::Sql::Models
     using AModel::AModel;
   public:
     struct TableData {
-      int id;
       int loadout_id;
       int profile_id;
       int faction_id;
       std::string name;
+      std::string code_name;
     };
 
   public:
@@ -30,7 +30,8 @@ namespace ApData::Sql::Models
             loadout_id INTEGER,
             profile_id INTEGER,
             faction_id INTEGER,
-            name       TEXT
+            name       TEXT,
+            code_name  TEXT
           );
           CREATE INDEX idx_loadout_id ON loadouts(loadout_id);
           CREATE INDEX idx_loadout_faction_ids ON loadouts(loadout_id, faction_id);
@@ -40,11 +41,12 @@ namespace ApData::Sql::Models
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
       return format_string(
-          "INSERT INTO loadouts(loadout_id, profile_id, faction_id, name) VALUES (%i, %i, %i, '%s')",
+          "INSERT INTO loadouts(loadout_id, profile_id, faction_id, name, code_name) VALUES (%i, %i, %i, '%s', '%s')",
           Data.loadout_id,
           Data.profile_id,
           Data.faction_id,
-          Data.name.c_str()
+          Data.name.c_str(),
+          Data.code_name.c_str()
       );
     }
 

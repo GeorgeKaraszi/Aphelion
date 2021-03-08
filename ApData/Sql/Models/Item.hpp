@@ -10,7 +10,6 @@ namespace ApData::Sql::Models
   public:
     struct TableData
     {
-      int id = -1;
       int item_id = -1;
       int item_category_id = -1;
       int faction_id = -1;

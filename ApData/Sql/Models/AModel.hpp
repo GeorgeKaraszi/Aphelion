@@ -12,8 +12,8 @@ namespace ApData::Sql::Models
   public:
     AModel()              = delete;
     AModel(const AModel&) = default;
-    explicit AModel(ApData::Sql::Database &database, const std::string& tbl_name)
-    : db(database), TableName(tbl_name)
+    explicit AModel(ApData::Sql::Database &database, std::string tbl_name)
+    : db(database), TableName(std::move(tbl_name))
     {};
 
     bool TableExists()
@@ -43,6 +43,17 @@ namespace ApData::Sql::Models
       return db.exec(drop_tbl);
     }
 
+    int TruncateTable()
+    {
+      if(!TableExists())
+      {
+        return 0;
+      }
+
+      auto truncate_tbl = format_string("DELETE FROM %s", TableName.c_str());
+      return db.exec(truncate_tbl);
+    }
+
     int CreateRecord()
     {
       if(Exists())
@@ -56,7 +67,7 @@ namespace ApData::Sql::Models
 
     virtual bool Exists()
     {
-      auto conditional = ExistsConditional();
+      auto conditional  = ExistsConditional();
       std::string query = format_string(
           "SELECT COUNT(*) FROM %s WHERE %s LIMIT 1",
           TableName.c_str(),

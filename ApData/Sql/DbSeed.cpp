@@ -4,135 +4,198 @@
 #include "Models/Loadout.hpp"
 #include "Models/ItemCategory.hpp"
 #include "Models/Item.hpp"
+#include "Models/Profile.hpp"
+#include "Models/Faction.hpp"
+#include "Models/Player.hpp"
+#include "Models/Outfit.hpp"
 
-void seed_loadouts(ApData::Sql::Models::Loadout &loadout_model)
+int seed_factions(
+    ApData::Sql::Models::Faction &model,
+    const std::shared_ptr<ApCore::Nets::CensusAPI> &census,
+    const ApData::Sql::DBSeed::ReporterCallback& reporter
+  )
 {
-  std::vector<ApData::Sql::Models::Loadout::TableData> loadout_data  = {
-      { 1, 1, 2, 2,    "Infiltrator"},
-      { 2, 3, 4, 2,    "Light Assault" },
-      { 3, 4, 5, 2,    "Medic" },
-      { 4, 5, 6, 2,    "Engineer" },
-      { 5, 6, 7, 2,    "Heavy Assault" },
-      { 6, 7, 8, 2,    "Max" },
-      { 7, 8, 10, 3,   "Infiltrator"},
-      { 8, 10, 12, 3,  "Light Assault" },
-      { 9, 11, 13, 3,  "Medic" },
-      { 10, 12, 14, 3, "Engineer" },
-      { 11, 13, 15, 3, "Heavy Assault" },
-      { 12, 14, 16, 3,  "Max" },
-      { 13, 15, 17, 1,  "Infiltrator"},
-      { 14, 17, 19, 1,  "Light Assault" },
-      { 15, 18, 20, 1,  "Medic" },
-      { 16, 19, 21, 1,  "Engineer" },
-      { 17, 20, 22, 1,  "Heavy Assault" },
-      { 18, 21, 23, 1,  "Max" }
-  };
+  int created_record_count = 0;
+  auto faction_data = census->GetCensusQuery("/get/ps2:v2/faction", "?c:limit=5000");
 
-  for(const auto& data : loadout_data)
+  if(!faction_data.contains("faction_list") || !faction_data["faction_list"].is_array())
   {
-    loadout_model.Data = data;
-    loadout_model.CreateRecord();
+    reporter(format_string("Error couldn't resolve Census Faction data!: %s", faction_data.dump().c_str()), true);
+    return 0;
   }
+
+  for(const auto& faction : faction_data["faction_list"])
+  {
+    try
+    {
+      model.Data.image_set_id.clear();
+      model.Data.image_path.clear();
+      model.Data.faction_id      = std::stoi(faction["faction_id"].get<std::string>());
+      model.Data.user_selectable = faction["user_selectable"].get<std::string>() != "0";
+
+      faction["code_tag"].get_to(model.Data.code_tag);
+      faction["name"]["en"].get_to(model.Data.name);
+
+      if(faction.contains("image_set_id"))
+      {
+        faction["image_set_id"].get_to(model.Data.image_set_id);
+      }
+
+      if(faction.contains("image_path"))
+      {
+        faction["image_path"].get_to(model.Data.image_path);
+      }
+    }
+    catch(...)
+    {
+      continue;
+    }
+
+    created_record_count += model.CreateRecord();
+  }
+
+  return created_record_count;
+
 }
 
-void seed_item_categories(ApData::Sql::Models::ItemCategory &item_cat_model)
+int seed_profiles(
+    ApData::Sql::Models::Profile &model,
+    const std::shared_ptr<ApCore::Nets::CensusAPI> &census,
+    const ApData::Sql::DBSeed::ReporterCallback& reporter
+  )
 {
-  std::vector<ApData::Sql::Models::ItemCategory::TableData> item_category_data = {
-      {1, 2, "Knife"},
-      {2, 3, "Pistol"},
-      {3, 4, "Shotgun"},
-      {4, 5, "SMG"},
-      {5, 6, "LMG"},
-      {6, 7, "Assault Rifle"},
-      {7, 8, "Carbine"},
-      {8, 9, "AV MAX (Left)"},
-      {9, 10, "AI MAX (Left)"},
-      {10, 11, "Sniper Rifle"},
-      {11, 12, "Scout Rifle"},
-      {12, 13, "Rocket Launcher"},
-      {13, 14, "Heavy Weapon"},
-      {14, 15, "Flamethrower MAX"},
-      {15, 16, "Flak MAX"},
-      {16, 17, "Grenade"},
-      {17, 18, "Explosive"},
-      {18, 19, "Battle Rifle"},
-      {19, 20, "AA MAX (Right)"},
-      {20, 21, "AV MAX (Right)"},
-      {21, 22, "AI MAX (Right)"},
-      {22, 23, "AA MAX (Left)"},
-      {23, 24, "Crossbow"},
-      {24, 99, "Camo"},
-      {25, 100, "Infantry"},
-      {26, 101, "Vehicles"},
-      {27, 102, "Infantry Weapons"},
-      {28, 103, "Infantry Gear"},
-      {29, 104, "Vehicle Weapons"},
-      {30, 105, "Vehicle Gear"},
-      {31, 106, "Armor Camo"},
-      {32, 107, "Weapon Camo"},
-      {33, 108, "Vehicle Camo"},
-      {34, 109, "Flash Primary Weapon"},
-      {35, 110, "Galaxy Left Weapon"},
-      {36, 111, "Galaxy Tail Weapon"},
-      {37, 112, "Galaxy Right Weapon"},
-      {38, 113, "Galaxy Top Weapon"},
-      {39, 114, "Harasser Top Gunner"},
-      {40, 115, "Liberator Belly Weapon"},
-      {41, 116, "Liberator Nose Cannon"},
-      {42, 117, "Liberator Tail Weapon"},
-      {43, 118, "Lightning Primary Weapon "},
-      {44, 119, "Magrider Gunner Weapon"},
-      {45, 120, "Magrider Primary Weapon"},
-      {46, 121, "Mosquito Nose Cannon"},
-      {47, 122, "Mosquito Wing Mount"},
-      {48, 123, "Prowler Gunner Weapon"},
-      {49, 124, "Prowler Primary Weapon"},
-      {50, 125, "Reaver Nose Cannon"},
-      {51, 126, "Reaver Wing Mount"},
-      {52, 127, "Scythe Nose Cannon"},
-      {53, 128, "Scythe Wing Mount"},
-      {54, 129, "Sunderer Front Gunner"},
-      {55, 130, "Sunderer Rear Gunner"},
-      {56, 131, "Vanguard Gunner Weapon"},
-      {57, 132, "Vanguard Primary Weapon"},
-      {58, 133, "Implants"},
-      {59, 134, "Consolidated Camo"},
-      {60, 135, "VO Packs"},
-      {61, 136, "Male VO Pack"},
-      {62, 137, "Female VO Pack"},
-      {63, 138, "Valkyrie Nose Gunner"},
-      {64, 139, "Infantry Abilities"},
-      {65, 140, "Vehicle Abilities"},
-      {66, 141, "Boosts & Utilities"},
-      {67, 142, "Consolidated Decal"},
-      {68, 143, "Attachments"},
-      {69, 144, "ANT Top Turret"},
-      {70, 145, "ANT Utility"},
-      {71, 147, "Aerial Combat Weapon"},
-      {72, 148, "ANT Harvesting Tool"},
-      {73, 157, "Hybrid Rifle"},
-      {74, 207, "Weapon"},
-      {75, 208, "Bastion Point Defense"},
-      {76, 209, "Bastion Bombard"},
-      {77, 210, "Bastion Weapon System"},
-      {78, 211, "Colossus Primary Weapon"},
-      {79, 212, "Colossus Front Right Weapon"},
-      {80, 213, "Colossus Front Left Weapon"},
-      {81, 214, "Colossus Rear Right Weapon"},
-      {82, 215, "Colossus Rear Left Weapon"}
-  };
+  int created_record_count = 0;
+  auto profile_data = census->GetCensusQuery(
+      "/get/ps2:v2/profile",
+      "?c:show=profile_id,profile_type_id,profile_type_description,faction_id,name.en,image_path&c:limit=5000"
+      );
 
-  for(const auto& data : item_category_data)
+  if(!profile_data.contains("profile_list") || !profile_data["profile_list"].is_array())
   {
-    item_cat_model.Data = data;
-    item_cat_model.CreateRecord();
+    reporter(format_string("Error couldn't resolve Census Profile data!: %s", profile_data.dump().c_str()), true);
+    return 0;
   }
+
+  for(const auto& profile : profile_data["profile_list"])
+  {
+    try
+    {
+      model.Data.profile_id      = std::stoi(profile["profile_id"].get<std::string>());
+      model.Data.profile_type_id = std::stoi(profile["profile_type_id"].get<std::string>());
+      model.Data.faction_id      = std::stoi(profile["faction_id"].get<std::string>());
+
+      profile["name"]["en"].get_to(model.Data.name);
+      profile["image_path"].get_to(model.Data.image_path);
+      profile["profile_type_description"].get_to(model.Data.description);
+    }
+    catch(...)
+    {
+      continue;
+    }
+
+    created_record_count += model.CreateRecord();
+  }
+
+  return created_record_count;
 }
 
-void seed_items(ApData::Sql::Models::Item &item_model, ApCore::Nets::CensusAPI *census)
+int seed_loadouts(
+    ApData::Sql::Models::Loadout &model,
+    const std::shared_ptr<ApCore::Nets::CensusAPI> &census,
+    const ApData::Sql::DBSeed::ReporterCallback& reporter
+  )
 {
-  int returned                = 0;
-  unsigned long next_set      = 0;
+  int created_record_count = 0;
+  auto loadout_data = census->GetCensusQuery("/get/ps2:v2/loadout", "?c:limit=5000");
+  std::vector<std::string> normalized_names = {
+      "Light Assault",
+      "Heavy Assault",
+      "Medic",
+      "Engineer",
+      "Infiltrator",
+      "MAX"
+  };
+
+
+  if(!loadout_data.contains("loadout_list") || !loadout_data["loadout_list"].is_array())
+  {
+    reporter(format_string("Error couldn't resolve Census Loadout data!: %s", loadout_data.dump().c_str()), true);
+    return 0;
+  }
+
+  for(const auto& loadout : loadout_data["loadout_list"])
+  {
+    try
+    {
+      model.Data.profile_id = std::stoi(loadout["profile_id"].get<std::string>());
+      model.Data.faction_id = std::stoi(loadout["faction_id"].get<std::string>());
+      model.Data.loadout_id = std::stoi(loadout["loadout_id"].get<std::string>());
+      loadout["code_name"].get_to(model.Data.code_name);
+      model.Data.name = "Unknown";
+
+      for(const auto& name : normalized_names)
+      {
+        if(model.Data.code_name.find(name) != std::string::npos)
+        {
+          model.Data.name = name;
+          break;
+        }
+      }
+
+    }
+    catch(...)
+    {
+      continue;
+    }
+
+    created_record_count += model.CreateRecord();
+  }
+
+  return created_record_count;
+}
+
+int seed_categories(
+    ApData::Sql::Models::ItemCategory &model,
+    const std::shared_ptr<ApCore::Nets::CensusAPI> &census,
+    const ApData::Sql::DBSeed::ReporterCallback& reporter
+  )
+{
+  int created_record_count = 0;
+  auto category_data = census->GetCensusQuery("/get/ps2:v2/item_category", "?c:show=item_category_id,name.en&c:limit=5000");
+
+  if(!category_data.contains("item_category_list") || !category_data["item_category_list"].is_array())
+  {
+    reporter(format_string("Error couldn't resolve Item Category data!: %s", category_data.dump().c_str()), true);
+    return 0;
+  }
+
+  for(const auto &item_category : category_data["item_category_list"])
+  {
+    try
+    {
+      model.Data.item_category_id = std::stoi(item_category["item_category_id"].get<std::string>());
+      item_category["name"]["en"].get_to(model.Data.name);
+    }
+    catch(...)
+    {
+      continue;
+    }
+
+    created_record_count += model.CreateRecord();
+  }
+
+  return created_record_count;
+}
+
+u_long seed_items(
+    ApData::Sql::Models::Item &model,
+    const std::shared_ptr<ApCore::Nets::CensusAPI> &census,
+    const ApData::Sql::DBSeed::ReporterCallback& reporter
+  )
+{
+  int returned;
+  unsigned long created_record_count = 0;
+  unsigned long next_set             = 0;
   const char* census_template =
       "?c:join=weapon"\
       "&c:show=item_id,name.en,is_vehicle_weapon,item_category_id,faction_id,image_path"\
@@ -148,7 +211,7 @@ void seed_items(ApData::Sql::Models::Item &item_model, ApCore::Nets::CensusAPI *
 
     if(!item_data.contains("item_list") || !item_data["item_list"].is_array())
     {
-      std::cout << "Error couldn't resolve Census Item data!: " << std::endl << item_data.dump() << std::endl;
+      reporter(format_string("Error couldn't resolve Item Data!: %s", item_data.dump().c_str()), true);
       break;
     }
 
@@ -156,53 +219,96 @@ void seed_items(ApData::Sql::Models::Item &item_model, ApCore::Nets::CensusAPI *
     {
      try
      {
-       item_model.Data.item_id           = std::stoi(item["item_id"].get<std::string>());
-       item_model.Data.item_category_id  = std::stoi(item["item_category_id"].get<std::string>());
-       item_model.Data.is_vehicle_weapon = item["is_vehicle_weapon"].get<std::string>() != "0";
+       model.Data.item_id           = std::stoi(item["item_id"].get<std::string>());
+       model.Data.item_category_id  = std::stoi(item["item_category_id"].get<std::string>());
+       model.Data.is_vehicle_weapon = item["is_vehicle_weapon"].get<std::string>() != "0";
 
-       if(item["faction_id"].is_string())
+       if(item.contains("faction_id") && item["faction_id"].is_string())
        {
-         item_model.Data.faction_id = std::stoi(item["faction_id"].get<std::string>());
+         model.Data.faction_id = std::stoi(item["faction_id"].get<std::string>());
        }
        else
        {
-         item_model.Data.faction_id = 0;
+         model.Data.faction_id = 0;
        }
 
-       item["image_path"].get_to(item_model.Data.image_path);
-       item["name"]["en"].get_to(item_model.Data.name);
+       item["image_path"].get_to(model.Data.image_path);
+       item["name"]["en"].get_to(model.Data.name);
      }
      catch(...)
      {
        continue;
      }
 
-      item_model.CreateRecord();
+      created_record_count += model.CreateRecord();
     }
   } while(returned == 5000);
+
+  return created_record_count;
 }
 
 namespace ApData::Sql::DBSeed
 {
-  void InitializeTables(ApData::Sql::Database &db, ApCore::Nets::CensusAPI *census)
+  void InitializeTables(ApData::Sql::Database& db, const std::shared_ptr<ApCore::Nets::CensusAPI>& census)
   {
+    InitializeTables(db, census, [](const std::string& message, bool error) { std::cout << message << std::endl; });
+  }
+
+  void InitializeTables(
+      ApData::Sql::Database& db,
+      const std::shared_ptr<ApCore::Nets::CensusAPI>& census,
+      const ReporterCallback& reporter
+    )
+  {
+    unsigned long total_records_created = 0;
     ApData::Sql::Models::Item         items_model(db);
-    ApData::Sql::Models::ItemCategory item_cat_model(db);
+    ApData::Sql::Models::ItemCategory category_model(db);
     ApData::Sql::Models::Loadout      loadout_model(db);
+    ApData::Sql::Models::Profile      profile_model(db);
+    ApData::Sql::Models::Faction      faction_model(db);
+    ApData::Sql::Models::Player(db).CreateTable();
+    ApData::Sql::Models::Outfit(db).CreateTable();
 
     if(items_model.CreateTable())
     {
-      seed_items(items_model, census);
+      reporter("Seeding Item's DB: This might take a while!", false);
+      auto rec_count = seed_items(items_model, census, reporter);
+      total_records_created += rec_count;
+      reporter(format_string("- Created %lu Item Category Records", rec_count), false);
     }
 
-    if(item_cat_model.CreateTable())
+    if(faction_model.CreateTable())
     {
-      seed_item_categories(item_cat_model);
+      reporter("Seeding Faction DB:", false);
+      auto rec_count = seed_factions(faction_model, census, reporter);
+      total_records_created += rec_count;
+      reporter(format_string("- Created %i Faction Records", rec_count), false);
+    }
+
+    if(profile_model.CreateTable())
+    {
+      reporter("Seeding Profile DB:", false);
+      auto rec_count = seed_profiles(profile_model, census, reporter);
+      total_records_created += rec_count;
+      reporter(format_string("- Created %i Profile Records", rec_count), false);
     }
 
     if(loadout_model.CreateTable())
     {
-      seed_loadouts(loadout_model);
+      reporter("Seeding Loadout DB:", false);
+      auto rec_count = seed_loadouts(loadout_model, census, reporter);
+      total_records_created += rec_count;
+      reporter(format_string("- Created %i Loadout Records", rec_count), false);
     }
+
+    if(category_model.CreateTable())
+    {
+      reporter("Seeding Item Category DB:", false);
+      auto rec_count = seed_categories(category_model, census, reporter);
+      total_records_created += rec_count;
+      reporter(format_string("- Created %i Item Category Records", rec_count), false);
+    }
+
+    reporter(format_string("Created %lu New Records in the DB", total_records_created), false);
   }
 }
