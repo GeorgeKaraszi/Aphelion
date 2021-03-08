@@ -4,6 +4,7 @@
 #include <ApWindow/Window.hpp>
 #include <ApWindow/RendererD3D.hpp>
 #include <ApUI/Core/UIManager.hpp>
+#include <ApData/Sql/Database.hpp>
 #include "MenuContainer.hpp"
 
 namespace ApGame::Core
@@ -23,6 +24,7 @@ namespace ApGame::Core
     static Application* GetApplication();
   public:
     std::shared_ptr<ApCore::Core::Network> network;
+    std::shared_ptr<ApData::Sql::Database> db;
     std::unique_ptr<ApWindow::Window>      window;
     std::unique_ptr<ApWindow::RendererD3D> renderer;
     std::unique_ptr<ApUI::Core::UIManager> uiManager;

@@ -7,6 +7,7 @@
 #include <ApUI/Widgets/Windows/ChildWindow.hpp>
 #include <ApGame/Contents/ScoreContent.hpp>
 #include <ApGame/Contents/SettingsContent.hpp>
+#include <ApGame/Contents/WelcomeContent.hpp>
 
 #pragma comment(lib, "ApUI.lib")
 namespace ApGame::Core
@@ -28,6 +29,7 @@ namespace ApGame::Core
     ApUI::Widgets::Windows::ChildWindow *m_body_window;
     Contents::ScoreContent      *m_score_body    = nullptr;
     Contents::SettingsContent   *m_settings_body = nullptr;
+    Contents::WelcomeContent    *m_welcome_body  = nullptr;
     ApUI::Widgets::AWidget      *m_stats_body    = nullptr;
     ApUI::Widgets::AWidget *m_teams_body         = nullptr;
     ApUI::Widgets::AWidget *m_selected_menu_item = nullptr;

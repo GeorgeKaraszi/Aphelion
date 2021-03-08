@@ -87,6 +87,7 @@ namespace ApGame::Core
     m_stats_body    = &m_body_window->CreateWidget<RenderBody>("Stats Body");
     m_teams_body    = &m_body_window->CreateWidget<RenderBody>("Teams Body");
     m_settings_body = &m_body_window->CreateWidget<Contents::SettingsContent>();
+    m_welcome_body  = &m_body_window->CreateWidget<Contents::WelcomeContent>();
 
     m_score_body->enabled    = false;
     m_stats_body->enabled    = false;
@@ -106,9 +107,13 @@ namespace ApGame::Core
       m_score_body->TeamManager.RegisterTeam(idx, tag);
     };
 
-//    SET_ACTIVE(m_settings_body, m_menu_bar->Settings)
+    m_welcome_body->CompletedInitializingEvent += [&]() {
+      m_menu_bar->Score->ClickEvent.Invoke();
+      m_welcome_body->Destroy();
+      m_welcome_body = nullptr;
+    };
 
-    SET_ACTIVE(m_score_body, m_menu_bar->Score)
+    SetCurrentPanel(m_welcome_body);
   }
 
   void MenuContainer::Update()

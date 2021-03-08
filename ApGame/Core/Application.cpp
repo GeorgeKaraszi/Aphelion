@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <ApData/Sql/DbSeed.hpp>
 #include "Application.hpp"
 
 static ApGame::Core::Application *g_application = nullptr;
@@ -55,6 +56,7 @@ namespace ApGame::Core
   {
     g_application = this;
     network   = std::make_shared<ApCore::Core::Network>(LoadApiKey());
+    db        = std::make_shared<ApData::Sql::Database>();
     window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay", false);
     renderer  = std::make_unique<ApWindow::RendererD3D>(window->GetMainWnd(), window->GetWidth(), window->GetHeight());
     uiManager = std::make_unique<ApUI::Core::UIManager>(
