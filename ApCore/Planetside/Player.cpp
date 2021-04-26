@@ -58,12 +58,12 @@ namespace ApCore::Planetside
 
   double Player::KillDeathAverage() const
   {
-    return death_count == 0 ? kill_count : (kill_count / death_count);
+    return death_count == 0 ? kill_count : ((double)kill_count / death_count);
   }
 
   double Player::HSRAverage() const
   {
-    return kill_count == 0 ? 0 : (headshot_count / kill_count) * 100;
+    return kill_count == 0 ? 0 : ((double)headshot_count / kill_count) * 100;
   }
 
   ApUI::Types::Color Player::KDColor() const
