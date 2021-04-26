@@ -5,19 +5,21 @@
 
 namespace ApData::Sql::Models
 {
-  class Outfit : public AModel
+  namespace Data
   {
-    using AModel::AModel;
-
-  public:
-    struct TableData
+    struct alignas(128) Outfit
     {
-      int faction_id;
+      int id         { -1 };
+      int faction_id { -1 };
       std::string outfit_id;
       std::string name;
       std::string tag;
     };
+  }
 
+  class Outfit : public AModel<Data::Outfit, 5>
+  {
+    using AModel::AModel;
   public:
     Outfit(const Outfit&) = default;
     explicit Outfit(ApData::Sql::Database &database) : AModel(database, "outfits")
@@ -40,21 +42,21 @@ namespace ApData::Sql::Models
 
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
-      return format_string(
-          "INSERT INTO outfits(faction_id, outfit_id, name, tag) VALUES (%i, '%s', '%s', '%s')",
+      return fmt::format(
+          "INSERT INTO outfits(faction_id, outfit_id, name, tag) VALUES ({}, '{}', '{}', '{}')",
           Data.faction_id,
-          Data.outfit_id.c_str(),
-          Data.name.c_str(),
-          Data.tag.c_str()
+          Data.outfit_id,
+          Data.name,
+          Data.tag
       );
     }
 
     std::string ExistsConditional() override {
-      return format_string("outfit_id = '%s'", Data.outfit_id.c_str());
+      return fmt::format("outfit_id = '{}'", Data.outfit_id);
     }
 
   public:
-    TableData Data;
+    Data::Outfit Data;
   };
 }
 #endif //APDATA_SQL_MODELS_OUTFIT_HPP

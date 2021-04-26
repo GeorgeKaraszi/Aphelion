@@ -1,5 +1,5 @@
 #include "ScoreContent.hpp"
-#include <ApInclude/string_helper.hpp>
+#include <fmt/format.h>
 #include <ApUI/Widgets/Layout/Dummy.hpp>
 #include <ApUI/Widgets/Layout/Separator.hpp>
 #include <ApUI/Widgets/Layout/NewLine.hpp>
@@ -9,10 +9,12 @@ using namespace ApCore;
 namespace ApGame::Contents
 {
 
-  ScoreContent::ScoreContent() : TeamManager(2)
+  ScoreContent::ScoreContent() : TeamManager(3)
   {
-    TeamManager.RegisterTeam(0, "fooi");
-    TeamManager.RegisterTeam(1, "twc2");
+    TeamManager.RegisterTeam(0, "TWC2");
+    TeamManager.RegisterTeam(1, "FEAR");
+    TeamManager.RegisterTeam(2, "CIK");
+    TeamManager.StartTrackingTeams();
   }
 
   void ScoreContent::_Draw_Impl()
@@ -47,10 +49,10 @@ namespace ApGame::Contents
         {
           auto &row = table.CreateRow(player->uuid);
           row["Name"].SetValues(player->player_name, color);
-          row["Score"].SetValues(std::to_string(player->score), player->ScoreColor());
-          row["Kills"].SetValues(std::to_string(player->kill_count), color);
-          row["Deaths"].SetValues(std::to_string(player->death_count), color);
-          row["KD"].SetValues(to_string(player->KillDeathAverage(), "%.2f"), player->KDColor());
+          row["Score"].SetValues(fmt::to_string(player->score), player->ScoreColor());
+          row["Kills"].SetValues(fmt::to_string(player->kill_count), color);
+          row["Deaths"].SetValues(fmt::to_string(player->death_count), color);
+          row["KD"].SetValues(fmt::format("{:.2f}", player->KillDeathAverage()), player->KDColor());
         }
       }
 

@@ -5,22 +5,29 @@
 
 namespace ApData::Sql::Models
 {
-  class Loadout : public AModel
+  namespace Data
   {
-    using AModel::AModel;
-  public:
-    struct TableData {
-      int loadout_id;
-      int profile_id;
-      int faction_id;
+    struct alignas(128) Loadout {
+      int id         { -1 };
+      int loadout_id { 0 };
+      int profile_id { 0 };
+      int faction_id { 0 };
       std::string name;
       std::string code_name;
     };
-
+  }
+  class Loadout : public AModel<Data::Loadout, 6>
+  {
+    using AModel::AModel;
   public:
     Loadout(const Loadout&) = default;
     explicit Loadout(ApData::Sql::Database &database) : AModel(database, "loadouts")
     {}
+
+    std::vector<Data::Loadout> FetchByProfileID(int profile_id)
+    {
+      return FetchBy(fmt::format("profile_id = {}", profile_id));
+    }
 
   protected:
     std::string TableSchema() override {
@@ -40,28 +47,29 @@ namespace ApData::Sql::Models
 
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
-      return format_string(
-          "INSERT INTO loadouts(loadout_id, profile_id, faction_id, name, code_name) VALUES (%i, %i, %i, '%s', '%s')",
+      return fmt::format(
+          "INSERT INTO loadouts(loadout_id, profile_id, faction_id, name, code_name) VALUES ({}, {}, {}, '{}', '{}')",
           Data.loadout_id,
           Data.profile_id,
           Data.faction_id,
-          Data.name.c_str(),
-          Data.code_name.c_str()
+          Data.name,
+          Data.code_name
       );
     }
 
     std::string ExistsConditional() override {
       auto name = Data.name;
       boost::replace_all(name, "'", "''");
-      return format_string(
-          "faction_id = %i AND profile_id = %i AND name = '%s'",
+      return fmt::format(
+          "faction_id = {} AND profile_id = {} AND name = '{}'",
           Data.faction_id,
           Data.profile_id,
-          name.c_str()
+          name
       );
     }
+
   public:
-    TableData Data;
+    Data::Loadout Data;
   };
 }
 

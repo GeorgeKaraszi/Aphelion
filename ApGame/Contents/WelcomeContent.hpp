@@ -15,10 +15,14 @@ namespace ApGame::Contents
   protected:
     void _Draw_Impl() override;
 
+  private:
+    void AddLog(const std::string &message, bool error = false);
+
   public:
     ApTools::Eventing::Event<> CompletedInitializingEvent;
   private:
     bool m_db_finished                      = false;
+    bool m_db_error                         = false;
     ApUI::Widgets::Layout::Group *m_db_init = nullptr;
   };
 }

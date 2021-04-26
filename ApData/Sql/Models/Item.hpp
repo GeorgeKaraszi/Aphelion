@@ -5,22 +5,37 @@
 
 namespace ApData::Sql::Models
 {
-  class Item : public AModel
+  namespace Data
   {
-  public:
-    struct TableData
+    struct alignas(128) Item
     {
-      int item_id = -1;
-      int item_category_id = -1;
-      int faction_id = -1;
-      bool is_vehicle_weapon = false;
+      int id                 { -1 };
+      int item_id            { -1 };
+      int item_category_id   { -1 };
+      int faction_id         { -1 };
+      int is_vehicle_weapon  { false };
       std::string image_path;
-      std::string name;
+      std::string name       { "[Unknown]" };
     };
-
+  }
+  class Item : public AModel<Data::Item, 7>
+  {
+    using AModel::AModel;
   public:
     Item(const Item&) = default;
     explicit Item(ApData::Sql::Database &database) : AModel(database, "items") {}
+
+    Data::Item FindByItemID(int item_id)
+    {
+      auto results = FetchBy(fmt::format("item_id = {}", item_id));
+
+      if(results.empty())
+      {
+        return Data::Item();
+      }
+
+      return results.front();
+    }
 
   protected:
     std::string TableSchema() override {
@@ -35,32 +50,33 @@ namespace ApData::Sql::Models
             name              TEXT
           );
           CREATE UNIQUE INDEX idx_item_id ON items(item_id);
+          CREATE INDEX idx_items_category_id ON items(item_category_id);
           CREATE INDEX idx_item_cat_faction_ids ON items(item_id, item_category_id, faction_id);
          )";
     }
 
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
-      return format_string(
+      return fmt::format(
           "INSERT INTO items(item_id, item_category_id, faction_id, is_vehicle_weapon, image_path, name) "\
-          "VALUES (%i, %i, %i, %i, '%s', '%s')",
+          "VALUES ({}, {}, {}, {}, '{}', '{}')",
           Data.item_id,
           Data.item_category_id,
           Data.faction_id,
           Data.is_vehicle_weapon,
-          Data.image_path.c_str(),
-          Data.name.c_str()
+          Data.image_path,
+          Data.name
       );
     }
 
     std::string ExistsConditional() override {
       std::string name = Data.name;
       boost::replace_all(name, "'", "''");
-      return format_string("item_id = %i AND name = '%s'", Data.item_id, name.c_str());
+      return fmt::format("item_id = {} AND name = '{}'", Data.item_id, name);
     }
 
   public:
-    TableData Data;
+    Data::Item Data;
   };
 }
 

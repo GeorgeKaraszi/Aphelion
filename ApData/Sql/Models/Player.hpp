@@ -5,18 +5,19 @@
 
 namespace ApData::Sql::Models
 {
-  class Player : public AModel
+  namespace Data
   {
-    using AModel::AModel;
-
-  public:
-    struct TableData
+    struct alignas(128) Player
     {
-      int faction_id;
+      int id         { -1 };
+      int faction_id { 0 };
       std::string character_id;
       std::string name;
     };
-
+  }
+  class Player : public AModel<Data::Player, 4>
+  {
+    using AModel::AModel;
   public:
     Player(const Player&) = default;
     explicit Player(ApData::Sql::Database &database) : AModel(database, "players")
@@ -37,20 +38,22 @@ namespace ApData::Sql::Models
 
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
-      return format_string(
-          "INSERT INTO players(character_id, name, faction_id) VALUES ('%s', '%s', %i)",
-          Data.character_id.c_str(),
-          Data.name.c_str(),
+      return fmt::format(
+          "INSERT INTO players(character_id, name, faction_id) VALUES ('{}', '{}', {})",
+          Data.character_id,
+          Data.name,
           Data.faction_id
       );
     }
 
     std::string ExistsConditional() override {
-      return format_string("name = '%s' OR character_id = '%s", Data.name.c_str(), Data.character_id);
+      auto name = Data.name;
+      boost::replace_all(name, "'", "''");
+      return fmt::format("name = '{}' OR character_id = '{}", name, Data.character_id);
     }
 
   public:
-    TableData Data;
+    Data::Player Data;
   };
 }
 #endif //APDATA_SQL_MODELS_PLAYER_HPP

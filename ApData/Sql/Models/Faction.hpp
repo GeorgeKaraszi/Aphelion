@@ -5,21 +5,23 @@
 
 namespace ApData::Sql::Models
 {
-  class Faction : public AModel
+  namespace Data
   {
-    using AModel::AModel;
-
-  public:
-    struct TableData
+    struct alignas(128) Faction
     {
-      int faction_id;
-      bool user_selectable;
+      int         id{ -1 };
+      int         faction_id{ -1 };
+      bool        user_selectable{ false };
       std::string name;
       std::string code_tag;
       std::string image_set_id;
       std::string image_path;
     };
+  }
 
+  class Faction : public AModel<Data::Faction, 7>
+  {
+    using AModel::AModel;
   public:
     Faction(const Faction&) = default;
     explicit Faction(ApData::Sql::Database &database) : AModel(database, "factions")
@@ -45,15 +47,15 @@ namespace ApData::Sql::Models
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
       boost::replace_all(Data.code_tag, "'", "''");
-      return format_string(
+      return fmt::format(
           "INSERT INTO factions(faction_id, user_selectable, name, code_tag, image_set_id, image_path) "\
-          "VALUES (%i, %i, '%s', '%s', '%s', '%s')",
+          "VALUES ({}, {}, '{}', '{}', '{}', '{}')",
           Data.faction_id,
           Data.user_selectable,
-          Data.name.c_str(),
-          Data.code_tag.c_str(),
-          Data.image_set_id.c_str(),
-          Data.image_path.c_str()
+          Data.name,
+          Data.code_tag,
+          Data.image_set_id,
+          Data.image_path
       );
     }
 
@@ -62,11 +64,11 @@ namespace ApData::Sql::Models
       auto code_tag = Data.code_tag;
       boost::replace_all(name, "'", "''");
       boost::replace_all(code_tag, "'", "''");
-      return format_string("name = '%s' AND code_tag = '%s'", name.c_str(), code_tag.c_str());
+      return fmt::format("name = '{}' AND code_tag = '{}'", name, code_tag);
     }
 
   public:
-    TableData Data;
+    Data::Faction Data;
   };
 }
 #endif //APDATA_SQL_MODELS_ITEMCATEGORY_HPP

@@ -5,17 +5,18 @@
 
 namespace ApData::Sql::Models
 {
-  class ItemCategory : public AModel
+  namespace Data
   {
-    using AModel::AModel;
-
-  public:
-    struct TableData
+    struct alignas(64) ItemCategory
     {
-      int item_category_id;
+      int id               { -1 };
+      int item_category_id { -1 };
       std::string name;
     };
-
+  }
+  class ItemCategory : public AModel<Data::ItemCategory, 3>
+  {
+    using AModel::AModel;
   public:
     ItemCategory(const ItemCategory&) = default;
     explicit ItemCategory(ApData::Sql::Database &database) : AModel(database, "item_categories")
@@ -35,21 +36,21 @@ namespace ApData::Sql::Models
 
     std::string RecordInsertQuery() override {
       boost::replace_all(Data.name, "'", "''");
-      return format_string(
-          "INSERT INTO item_categories(item_category_id, name) VALUES (%i, '%s')",
+      return fmt::format(
+          "INSERT INTO item_categories(item_category_id, name) VALUES ({}, '{}')",
           Data.item_category_id,
-          Data.name.c_str()
+          Data.name
       );
     }
 
     std::string ExistsConditional() override {
       auto name = Data.name;
       boost::replace_all(name, "'", "''");
-      return format_string("name = '%s'", name.c_str());
+      return fmt::format("name = '{}'", name);
     }
 
   public:
-    TableData Data;
+    Data::ItemCategory Data;
   };
 }
 #endif //APDATA_SQL_MODELS_ITEMCATEGORY_HPP
