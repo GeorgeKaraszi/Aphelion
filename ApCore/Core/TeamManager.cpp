@@ -1,17 +1,22 @@
 #include "TeamManager.hpp"
+//#include <ApCore/Events/Outfit/OutfitEvent.hpp>
+#include <ApCore/Events/POG/PogEvent.hpp>
 
 # define AP_ASSERT_IDX(idx, teams) AP_ASSERT(((idx) >= 0 && (idx) < (teams).size()), "Team index is out of range!");
 
 namespace ApCore::Core
 {
-  TeamManager::TeamManager(int size) : Teams(size), m_event_manager(this)
-  {}
+  TeamManager::TeamManager(int size)
+  : Teams(size), m_event(std::make_shared<Events::POG::PogEvent>(this))
+  {
+    m_event->LoadRules();
+  }
 
   void TeamManager::SetSize(int size)
   {
     int size_diff = size - (int)Teams.size();
 
-    m_event_manager.StopTrackingEvents();
+    m_event->StopTrackingEvents();
 
     if(size_diff < 0)
     {
@@ -29,7 +34,6 @@ namespace ApCore::Core
   {
     AP_ASSERT_IDX(idx, Teams)
 
-    m_event_manager.StopTrackingEvents();
 
     if(BLANK_PTR(Teams[idx]) || Teams[idx]->Tag != tag)
     {
@@ -37,8 +41,12 @@ namespace ApCore::Core
       Teams[idx] = std::make_shared<Planetside::Team>(tag);
       Teams[idx]->GatherCensusInfo();
     }
+  }
 
-    m_event_manager.StartTrackingEvents();
+  void TeamManager::StartTrackingTeams()
+  {
+    m_event->StopTrackingEvents();
+    m_event->StartTrackingEvents();
   }
 
   void TeamManager::RemoveTeam(TEAM_PTR team)
@@ -48,6 +56,32 @@ namespace ApCore::Core
       team->Reset();
       team.reset();
     }
+  }
+
+  TeamManager::TEAM_PTR TeamManager::FindTeam(const std::string &outfit_id)
+  {
+    for(auto &team : Teams)
+    {
+      if(team->uuid == outfit_id)
+      {
+        return team;
+      }
+    }
+
+    return nullptr;
+  }
+
+  Planetside::Team::PLAYER_PTR TeamManager::FindPlayer(const std::string &player_id)
+  {
+    for(auto &team : Teams)
+    {
+      if(team->ContainsPlayer(player_id))
+      {
+        return team->GetPlayer(player_id);
+      }
+    }
+
+    return nullptr;
   }
 
   std::vector<std::string_view> TeamManager::player_ids()

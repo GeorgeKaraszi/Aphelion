@@ -6,6 +6,7 @@
 
 namespace ApCore::Planetside
 {
+  class Team;
   class Player : public AFaction
   {
   public:
@@ -15,17 +16,20 @@ namespace ApCore::Planetside
   public:
     Player()              = default;
     Player(const Player&) = default;
-    explicit Player(const JSON &player);
+    explicit Player(Team* current_team, const JSON &player);
 
-    void AddKill();
+    void AddKill(bool is_headshot = false);
     void AddDeath();
+    void RemoveDeath();
+    void AddHealTick();
+    void AddReviveTick();
     void AddScore(int points);
     void ToggleBenched();
     [[nodiscard]] bool KDPositive() const;
     [[nodiscard]] double KillDeathAverage() const;
-
-    ApUI::Types::Color ScoreColor();
-    ApUI::Types::Color KDColor();
+    [[nodiscard]] double HSRAverage() const;
+    [[nodiscard]] ApUI::Types::Color ScoreColor() const;
+    [[nodiscard]] ApUI::Types::Color KDColor() const;
   private:
     static LoadoutT Loadout(char profile_type);
 
@@ -34,10 +38,14 @@ namespace ApCore::Planetside
     std::string player_name;
     std::string alias_name;
     LoadoutT loadout{};
-    long score       = 0;
-    long kill_count  = 0;
-    long death_count = 0;
-    bool benched     = false;
+    Team *team          = nullptr;
+    long score          = 0;
+    long kill_count     = 0;
+    long death_count    = 0;
+    long heal_ticks     = 0;
+    long revive_ticks   = 0;
+    long headshot_count = 0;
+    bool benched        = false;
 
   };
 }

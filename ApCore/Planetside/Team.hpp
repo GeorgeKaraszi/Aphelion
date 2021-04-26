@@ -27,8 +27,9 @@ namespace ApCore::Planetside
     PLAYER_PTR GetPlayer(const std::string& id);
     std::vector<std::string_view> PlayerIds();
 
-    void AddScore(const std::string& player_id, int points);
-    void ActivePlayers(const std::function<void(PLAYER_PTR)>& callback);
+    void AddTeamScore(int points);
+    [[maybe_unused]] void AddScore(const std::string& player_id, int points);
+    [[maybe_unused]] void ActivePlayers(const std::function<void(PLAYER_PTR)>& callback);
     bool ContainsPlayer(const std::string& id);
 
     void StartTracking();
@@ -36,11 +37,13 @@ namespace ApCore::Planetside
 
     void Reset();
 
-    [[nodiscard]] size_t size() const noexcept                           { return Players.size(); }
-    std::vector<PLAYER_PTR>::iterator begin()                            { return Players.begin(); }
-    std::vector<PLAYER_PTR>::iterator end()                              { return Players.end(); }
-    [[nodiscard]] std::vector<PLAYER_PTR>::const_iterator cbegin() const { return Players.cbegin(); }
-    [[nodiscard]] std::vector<PLAYER_PTR>::const_iterator cend()   const { return Players.cend(); }
+    [[nodiscard]] size_t size() const noexcept             { return Players.size(); }
+    std::vector<PLAYER_PTR>::iterator begin()              { return Players.begin(); }
+    std::vector<PLAYER_PTR>::iterator end()                { return Players.end(); }
+    [[maybe_unused]] [[nodiscard]]
+    std::vector<PLAYER_PTR>::const_iterator cbegin() const { return Players.cbegin(); }
+    [[nodiscard]]
+    std::vector<PLAYER_PTR>::const_iterator cend()   const { return Players.cend(); }
 
   public:
     std::string Tag;
@@ -48,7 +51,7 @@ namespace ApCore::Planetside
     std::string TagName;
     std::string uuid;
     std::vector<PLAYER_PTR> Players;
-    long Score   { 0 };
+    long Score       { 0 };
     bool LoadingTeam { false };
   private:
     u_long tracking_id   { 0 };

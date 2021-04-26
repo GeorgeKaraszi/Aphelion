@@ -1,6 +1,8 @@
 #include "Team.hpp"
+#include <fmt/format.h>
 #include <ApCore/Core/Network.hpp>
 #include <utility>
+#include <iostream>
 
 namespace ApCore::Planetside
 {
@@ -14,23 +16,23 @@ namespace ApCore::Planetside
 
   Team::~Team()
   {
-    StopTracking();
+//    StopTracking();
   }
 
   void Team::GatherCensusInfo()
   {
     auto census = Core::Network::GetNetwork()->GetCensusAPI();
-    InitializeRoster(census->GetOutfitRoster(Tag));
+    InitializeRoster(census->GetOutfitRoster(Tag).data);
   }
 
   bool Team::InitializeRoster(const JSON &team_roster)
   {
     Reset();
 
-    if(team_roster["returned"] == 0 ||
-       !team_roster.contains("outfit_list") ||
+    if(!team_roster.contains("outfit_list") ||
        !team_roster["outfit_list"].is_array() ||
-       !team_roster["outfit_list"].front().contains("members"))
+       !team_roster["outfit_list"].front().contains("members")
+       )
     {
       return false;
     }
@@ -41,14 +43,12 @@ namespace ApCore::Planetside
     outfit["name"].get_to(Name);
     outfit["outfit_id"].get_to(uuid);
 
-    TagName.resize(150);
-    sprintf_s(TagName.data(), 150, "[%s] %s", Tag.c_str(), Name.c_str());
-
+    TagName     = fmt::format("[{}] {}", Tag, Name);
     LoadingTeam = true;
 
     for(auto &player : outfit["members"])
     {
-      if(player["character"]["status"]["online_status"] == "1")
+      if(player["character"]["status"]["online_status"] != "0")
       {
         AddPlayer(player["character"]);
       }
@@ -56,7 +56,7 @@ namespace ApCore::Planetside
 
     LoadingTeam = false;
 
-    StartTracking();
+//    StartTracking();
     return true;
   }
 
@@ -71,7 +71,7 @@ namespace ApCore::Planetside
 
     if(!ContainsPlayer(id))
     {
-      m_player_map[id] = Players.emplace_back(std::make_shared<Player>(player_data));
+      m_player_map[id] = Players.emplace_back(std::make_shared<Player>(this, player_data));
     }
 
     return m_player_map[id];
@@ -99,7 +99,12 @@ namespace ApCore::Planetside
     return ids;
   }
 
-  void Team::AddScore(const std::string& player_id, int points)
+  void Team::AddTeamScore(int points)
+  {
+    Score += points;
+  }
+
+  [[maybe_unused]] void Team::AddScore(const std::string& player_id, int points)
   {
     if(ContainsPlayer(player_id))
     {
@@ -108,7 +113,7 @@ namespace ApCore::Planetside
     }
   }
 
-  void Team::ActivePlayers(const std::function<void(Team::PLAYER_PTR)>& callback)
+  [[maybe_unused]] void Team::ActivePlayers(const std::function<void(Team::PLAYER_PTR)>& callback)
   {
     for(const auto &x : Players)
     {
@@ -124,8 +129,8 @@ namespace ApCore::Planetside
 
   void Team::StartTracking()
   {
-    if(tracking_id)
-      StopTracking();
+//    if(tracking_id)
+//      StopTracking();
 
     auto websocket = Core::Network::GetNetwork()->GetWebSocket();
     tracking_id    = websocket->DataEvent += [&](const JSON &websocket_data){

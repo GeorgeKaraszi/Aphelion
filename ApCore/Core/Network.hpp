@@ -29,6 +29,7 @@ namespace ApCore::Core
     void Shutdown();
     [[nodiscard]]
     bool IsRunning() const { return m_runnable; }
+    bool HasAPIKey() const { return !m_api_key.empty(); }
     std::shared_ptr<Nets::WebSocket> GetWebSocket();
     std::shared_ptr<Nets::CensusAPI> GetCensusAPI();
 
