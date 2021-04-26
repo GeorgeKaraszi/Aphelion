@@ -38,7 +38,7 @@ namespace ApCore::Nets
     m_outfit_lookup_schema = std::move(outfit_lookup_schema);
   }
 
-  JSON CensusAPI::GetOutfitRoster(const std::string& outfit_tag)
+  CensusAPI::RESPONSE CensusAPI::GetOutfitRoster(const std::string& outfit_tag)
   {
     char request[512];
     auto lc_tag = boost::to_lower_copy(outfit_tag);
@@ -48,34 +48,40 @@ namespace ApCore::Nets
     return FetchHttpData(uri);
   }
 
-  JSON CensusAPI::GetImageData(const std::string_view &image_path)
+  CensusAPI::RESPONSE CensusAPI::GetImageData(const std::string_view &image_path)
   {
     auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, image_path.data());
     return FetchHttpData(uri);
   }
 
-  JSON CensusAPI::GetCensusQuery(const std::string_view &census_path, const std::string_view &query)
+  CensusAPI::RESPONSE CensusAPI::GetCensusQuery(const std::string_view &census_path, const std::string_view &query)
   {
     auto uri = ApCore::Modules::Uri::CensusUri(m_network->m_api_key, census_path.data(), query.data());
     return FetchHttpData(uri);
   }
 
-  JSON CensusAPI::FetchHttpData(const ApCore::Modules::Uri &uri)
+  CensusAPI::RESPONSE CensusAPI::FetchHttpData(const ApCore::Modules::Uri &uri)
   {
-    auto stream   = beast::tcp_stream(net::make_strand(m_ioc));
+    auto stream                          = beast::tcp_stream(net::make_strand(m_ioc));
     http::request<http::string_body> req = { http::verb::get, uri.Request, 11 };
     http::response<http::string_body> res;
     beast::flat_buffer buffer;
     beast::error_code ec;
+    RESPONSE response;
+
     auto error_handle = [&](const char* what) {
-      if(!ec)
+      if(ec)
       {
-        return false;
+        response.backtrace = what;
+        response.error     = ec.message();
+        response.success   = false;
+
+        // TODO: LOG and deal with errors from HTTP stream
+        stream.socket().shutdown(tcp::socket::shutdown_both, ec);
+        return true;
       }
 
-      // TODO: LOG and deal with errors from HTTP stream
-      stream.socket().shutdown(tcp::socket::shutdown_both, ec);
-      return true;
+      return false;
     };
 
     req.set(http::field::host, uri.Host);
@@ -85,17 +91,22 @@ namespace ApCore::Nets
 
     http::write(stream, req, ec);
 
-    if(error_handle("PollQueue::http::write")) return JSON();
+    if(error_handle("CensusAPI::FetchHttpData >http::write"))
+    {
+      return response;
+    }
 
     http::read(stream, buffer, res, ec);
 
-    if(error_handle("PollQueue::http::read")) return JSON();
+    if(error_handle("CensusAPI::FetchHttpData >http::read"))
+    {
+      return response;
+    }
 
     stream.socket().shutdown(tcp::socket::shutdown_both, ec);
+    response.data = JSON::parse(res.body(), nullptr, false, true);
 
-    auto parsed_body = JSON::parse(res.body(), nullptr, false, true);
-
-    return parsed_body;
+    return response;
   }
 
 }

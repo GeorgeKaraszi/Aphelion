@@ -7,6 +7,7 @@
 #include <ApInclude/boost.hpp>
 #include <ApCore/Modules/Uri.hpp>
 #include <ApTools/Eventing/Event.hpp>
+#include <ApInclude/macros.h>
 
 namespace ApCore::Core { class Network; }
 
@@ -16,13 +17,22 @@ namespace ApCore::Nets
   {
     using CALLBACK_FN = std::function<bool(const JSON&)>;
   public:
+    struct alignas(128) RESPONSE
+    {
+      bool success = true;
+      std::string backtrace;
+      std::string error;
+      JSON data;
+    };
+
+  public:
     explicit CensusAPI(ApCore::Core::Network *network);
-    JSON GetOutfitRoster(const std::string& outfit_tag);
-    JSON GetImageData(const std::string_view &image_path);
-    JSON GetCensusQuery(const std::string_view& census_path, const std::string_view& query = "");
+    RESPONSE GetOutfitRoster(const std::string& outfit_tag);
+    RESPONSE GetImageData(const std::string_view &image_path);
+    RESPONSE GetCensusQuery(const std::string_view& census_path, const std::string_view& query = "");
 
   private:
-    JSON FetchHttpData(const ApCore::Modules::Uri &uri);
+    RESPONSE FetchHttpData(const ApCore::Modules::Uri &uri);
 
   private:
     ApCore::Core::Network *m_network;
