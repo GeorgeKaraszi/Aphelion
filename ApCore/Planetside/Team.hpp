@@ -28,6 +28,7 @@ namespace ApCore::Planetside
     std::vector<std::string_view> PlayerIds();
 
     void AddTeamScore(int points);
+    long GetScore();
     [[maybe_unused]] void AddScore(const std::string& player_id, int points);
     [[maybe_unused]] void ActivePlayers(const std::function<void(PLAYER_PTR)>& callback);
     bool ContainsPlayer(const std::string& id);

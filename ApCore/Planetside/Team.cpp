@@ -104,6 +104,20 @@ namespace ApCore::Planetside
     Score += points;
   }
 
+  long Team::GetScore()
+  {
+    long total_score = Score;
+    if(!LoadingTeam)
+    {
+      for (auto const& player : Players)
+      {
+        total_score += player->score;
+      }
+    }
+
+    return total_score;
+  }
+
   [[maybe_unused]] void Team::AddScore(const std::string& player_id, int points)
   {
     if(ContainsPlayer(player_id))

@@ -9,11 +9,12 @@ using namespace ApCore;
 namespace ApGame::Contents
 {
 
-  ScoreContent::ScoreContent() : TeamManager(3)
+  ScoreContent::ScoreContent() : TeamManager(4)
   {
-    TeamManager.RegisterTeam(0, "TWC2");
-    TeamManager.RegisterTeam(1, "FEAR");
-    TeamManager.RegisterTeam(2, "CIK");
+    TeamManager.RegisterTeam(0, "fiji");
+    TeamManager.RegisterTeam(1, "DPSO");
+    TeamManager.RegisterTeam(2, "FEAR");
+    TeamManager.RegisterTeam(3, "VKEY");
     TeamManager.StartTrackingTeams();
   }
 
@@ -41,8 +42,6 @@ namespace ApGame::Contents
       table.AddStyle(ImGuiCol_HeaderHovered, color_vec);
       table.AddColumns({"Name", "Score", "Kills", "Deaths", "KD"});
 
-
-
       if(!team->LoadingTeam)
       {
         for (const auto &player : *team)
@@ -56,7 +55,13 @@ namespace ApGame::Contents
         }
       }
 
+      // OutfitName  [:Right Alignment Space:]  Score NN
+      std::string team_score = fmt::format("Score {}", team->GetScore());
       Texts::TextColored(team->TagName, team->EmpireColor()).Draw();
+      ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize(team_score.c_str()).x - 1);
+      Texts::TextColored(team_score).Draw();
+
+      // Player Table
       table.Draw();
 
       if((i+1) < TeamManager.size())
