@@ -9,9 +9,9 @@ namespace ApData::Sql::Models
   {
     struct alignas(128) Faction
     {
-      int         id{ -1 };
-      int         faction_id{ -1 };
-      bool        user_selectable{ false };
+      int         id              { -1 };
+      int         faction_id      { -1 };
+      int         user_selectable { false };
       std::string name;
       std::string code_tag;
       std::string image_set_id;
