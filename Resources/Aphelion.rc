@@ -1,0 +1,20 @@
+#include "resource.h"
+#define APSTUDIO_READONLY_SYMBOLS
+#include "winres.h"
+
+IDI_NOTIFICATIONICON			ICON			"ap_icon.ico"
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_CONTEXTMENU MENU
+BEGIN
+    POPUP ""
+	BEGIN
+    MENUITEM "Open", IDM_OPEN
+	MENUITEM SEPARATOR
+	MENUITEM "E&xit", IDM_EXIT
+	END
+END
+

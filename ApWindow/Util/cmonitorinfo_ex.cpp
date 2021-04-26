@@ -9,7 +9,7 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
   return TRUE;
 }
 
-CMonitorInfoEx::CMonitorInfoEx() : tagMONITORINFOEXA()
+CMonitorInfoEx::CMonitorInfoEx() : tagMONITORINFOEXW()
 {
   cbSize = sizeof(MONITORINFOEX);
 }

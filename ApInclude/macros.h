@@ -3,10 +3,11 @@
 
 #include <iostream>
 
-#define BLANK_PTR(x)   ( x == nullptr )
-#define PRESENT_PTR(x) ( x != nullptr )
-#define ReleaseCOM(x)  { if(x){ (x)->Release(); x = nullptr; } }
 #define HR(x) (x)
+#define BLANK_PTR(x)            ( x == nullptr )
+#define PRESENT_PTR(x)          ( x != nullptr )
+#define ReleaseCOM(x)           { if(x){ (x)->Release(); x = nullptr; } }
+#define AP_VEC_MATCH_FOUND(x,y) (std::find(x.begin(), x.end(), y) != x.end())
 #define AP_ASSERT(condition, message)\
    (!(condition)) ?\
       (std::cerr << "Assertion failed: (" << #condition << "), "\
