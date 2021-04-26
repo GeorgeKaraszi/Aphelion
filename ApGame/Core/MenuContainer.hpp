@@ -18,22 +18,22 @@ namespace ApGame::Core
     using APanel = ApUI::Panels::APanel;
   public:
     MenuContainer();
-
+    void SetCurrentPanel(ApUI::Widgets::AWidget *next_panel);
   protected:
     void Update() override;
   private:
-    void SetCurrentPanel(ApUI::Widgets::AWidget *next_panel);
+    void InitializeMenu();
 
   private:
-    MenuBar *m_menu_bar;
     ApUI::Widgets::Windows::ChildWindow *m_body_window;
-    Contents::ScoreContent      *m_score_body    = nullptr;
-    Contents::SettingsContent   *m_settings_body = nullptr;
-    Contents::WelcomeContent    *m_welcome_body  = nullptr;
-    ApUI::Widgets::AWidget      *m_stats_body    = nullptr;
-    ApUI::Widgets::AWidget *m_teams_body         = nullptr;
-    ApUI::Widgets::AWidget *m_selected_menu_item = nullptr;
-    ApUI::Widgets::AWidget *m_current_body       = nullptr;
+    MenuBar                     *m_menu_bar           = nullptr;
+    Contents::ScoreContent      *m_score_body         = nullptr;
+    Contents::SettingsContent   *m_settings_body      = nullptr;
+    Contents::WelcomeContent    *m_welcome_body       = nullptr;
+    ApUI::Widgets::AWidget      *m_stats_body         = nullptr;
+    ApUI::Widgets::AWidget      *m_teams_body         = nullptr;
+    ApUI::Widgets::AWidget      *m_selected_menu_item = nullptr;
+    ApUI::Widgets::AWidget      *m_current_body       = nullptr;
   };
 }
 

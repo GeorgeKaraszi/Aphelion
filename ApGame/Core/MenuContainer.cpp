@@ -82,13 +82,35 @@ namespace ApGame::Core
 
     m_menu_bar      = &CreateWidget<MenuBar>();
     m_body_window   = &CreateWidget<Windows::ChildWindow>("ChildBody", Windows::ApUIWindow_SizeByAvailableSpace);
+    m_welcome_body  = &m_body_window->CreateWidget<Contents::WelcomeContent>();
+    m_welcome_body->CompletedInitializingEvent += [&]() {
+      InitializeMenu();
+      m_welcome_body->Destroy();
+      m_welcome_body = nullptr;
+    };
+
+    m_menu_bar->enabled = false;
+
+    SetCurrentPanel(m_welcome_body);
+  }
+
+  void MenuContainer::Update()
+  {
+    ApUI::Panels::PanelWindow::Update();
+    m_body_window->SetSize(ImGui::GetWindowSize() - ImGui::GetCursorPos());
+  }
+
+  void MenuContainer::InitializeMenu()
+  {
+    if(BLANK_PTR(m_welcome_body))
+      return;
 
     m_score_body    = &m_body_window->CreateWidget<Contents::ScoreContent>();
     m_stats_body    = &m_body_window->CreateWidget<RenderBody>("Stats Body");
     m_teams_body    = &m_body_window->CreateWidget<RenderBody>("Teams Body");
     m_settings_body = &m_body_window->CreateWidget<Contents::SettingsContent>();
-    m_welcome_body  = &m_body_window->CreateWidget<Contents::WelcomeContent>();
 
+    m_menu_bar->enabled      = true;
     m_score_body->enabled    = false;
     m_stats_body->enabled    = false;
     m_teams_body->enabled    = false;
@@ -107,19 +129,7 @@ namespace ApGame::Core
       m_score_body->TeamManager.RegisterTeam(idx, tag);
     };
 
-    m_welcome_body->CompletedInitializingEvent += [&]() {
-      m_menu_bar->Score->ClickEvent.Invoke();
-      m_welcome_body->Destroy();
-      m_welcome_body = nullptr;
-    };
-
-    SetCurrentPanel(m_welcome_body);
-  }
-
-  void MenuContainer::Update()
-  {
-    ApUI::Panels::PanelWindow::Update();
-    m_body_window->SetSize(ImGui::GetWindowSize() - ImGui::GetCursorPos());
+    m_menu_bar->Score->ClickEvent.Invoke();
   }
 
   void MenuContainer::SetCurrentPanel(ApUI::Widgets::AWidget *next_panel)

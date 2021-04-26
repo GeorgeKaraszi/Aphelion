@@ -14,6 +14,43 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   switch(msg)
   {
     // TODO: Deal with window resizing (like game rez changes ect..)
+    case WM_CREATE:
+      // add the notification icon
+      if (!g_application->window->AddNotificationIcon(hwnd))
+      {
+        MessageBox(
+            hwnd,
+            L"Please read the ReadMe.txt file for troubleshooting",
+            L"Error adding icon",
+            MB_OK
+        );
+        return -1;
+      }
+      break;
+    case WMAPP_NOTIFYCALLBACK:
+      switch (LOWORD(lParam))
+      {
+        case WM_CONTEXTMENU:
+        {
+          g_application->window->ShowContextMenu(hwnd);
+          break;
+        }
+        default:
+          break;
+      }
+      break;
+    case WM_COMMAND:
+      switch(LOWORD(wParam))
+      {
+        case IDM_OPEN:
+          g_application->window->ToggleWindow();
+          return 1;
+        case IDM_EXIT:
+          DestroyWindow(hwnd);
+          break;
+        default:
+          break;
+      }
     case WM_ACTIVATE:
     case WM_SIZE:
     case WM_ENTERSIZEMOVE:
@@ -23,6 +60,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_MENUCHAR:
       return MAKELRESULT(0, MNC_CLOSE);  // Don't beep when we alt-enter.
     case WM_DESTROY:
+      g_application->window->DeleteNotificationIcon();
       PostQuitMessage(0);
       return 0;
     default:
@@ -57,7 +95,7 @@ namespace ApGame::Core
     g_application = this;
     network   = std::make_shared<ApCore::Core::Network>(LoadApiKey());
     db        = std::make_shared<ApData::Sql::Database>();
-    window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, "MainOverlay", false);
+    window    = std::make_unique<ApWindow::Window>(hinst, WindowProc, L"MainOverlay", false);
     renderer  = std::make_unique<ApWindow::RendererD3D>(window->GetMainWnd(), window->GetWidth(), window->GetHeight());
     uiManager = std::make_unique<ApUI::Core::UIManager>(
         window->GetMainWnd(),
