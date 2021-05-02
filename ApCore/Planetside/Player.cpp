@@ -43,7 +43,7 @@ namespace ApCore::Planetside
 
   void Player::AddScore(int points)
   {
-    score += points;
+    net_score += points;
   }
 
   void Player::ToggleBenched()
@@ -78,11 +78,11 @@ namespace ApCore::Planetside
 
   ApUI::Types::Color Player::ScoreColor() const
   {
-    if(score == 0)
+    if(net_score == 0)
     {
       return ApUI::Types::Color::Yellow;
     }
-    else if(score > 0)
+    else if(net_score > 0)
     {
       return ApUI::Types::Color::Green;
     }

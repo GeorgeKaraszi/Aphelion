@@ -13,7 +13,7 @@ namespace ApCore::Core
   public:
     explicit TeamManager(int size = 1);
 
-    void SetSize(int size);
+    int  SetSize(int size);
     void RegisterTeam(int idx, const std::string &tag);
     void StartTrackingTeams();
     static void RemoveTeam(TEAM_PTR team);

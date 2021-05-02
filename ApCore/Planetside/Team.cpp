@@ -67,6 +67,9 @@ namespace ApCore::Planetside
 
   Team::PLAYER_PTR Team::AddPlayer(const JSON &player_data)
   {
+    if(!player_data.contains("character_id") || player_data["character_id"].empty())
+      return nullptr;
+
     auto id = player_data["character_id"].get<std::string>();
 
     if(!ContainsPlayer(id))
@@ -91,6 +94,11 @@ namespace ApCore::Planetside
   {
     std::vector<std::string_view> ids;
 
+    while(LoadingTeam)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+
     for(const auto &x : Players)
     {
       ids.push_back(x->uuid);
@@ -111,7 +119,7 @@ namespace ApCore::Planetside
     {
       for (auto const& player : Players)
       {
-        total_score += player->score;
+        total_score += player->net_score;
       }
     }
 

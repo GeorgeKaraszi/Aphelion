@@ -12,7 +12,7 @@ namespace ApCore::Core
     m_event->LoadRules();
   }
 
-  void TeamManager::SetSize(int size)
+  int TeamManager::SetSize(int size)
   {
     int size_diff = size - (int)Teams.size();
 
@@ -28,6 +28,7 @@ namespace ApCore::Core
     }
 
     Teams.resize(size);
+    return size_diff;
   }
 
   void TeamManager::RegisterTeam(int idx, const std::string& tag)

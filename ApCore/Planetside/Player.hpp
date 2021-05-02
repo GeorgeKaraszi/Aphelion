@@ -38,14 +38,15 @@ namespace ApCore::Planetside
     std::string player_name;
     std::string alias_name;
     LoadoutT loadout{};
-    Team *team          = nullptr;
-    long score          = 0;
-    long kill_count     = 0;
-    long death_count    = 0;
-    long heal_ticks     = 0;
-    long revive_ticks   = 0;
-    long headshot_count = 0;
-    bool benched        = false;
+    Team *team         = nullptr;
+    int total_score    = 0;
+    int net_score      = 0;
+    int kill_count     = 0;
+    int death_count    = 0;
+    int heal_ticks     = 0;
+    int revive_ticks   = 0;
+    int headshot_count = 0;
+    bool benched       = false;
 
   };
 }

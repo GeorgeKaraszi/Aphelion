@@ -84,6 +84,23 @@ namespace ApCore::Events::POG
       return false;
     }
 
+    auto item_db    = ApData::Sql::Models::Item(m_db);
+    auto loadout_db = ApData::Sql::Models::Loadout(m_db);
+    auto weapon     = item_db.FindByItemID(attacker_weapon_id);
+    auto loadout    = loadout_db.FetchByProfileID(attacker_loadout_id);
+
+    fmt::print(
+        fmt::emphasis::bold | fg(fmt::color::red),
+        "[{}] {} killed [{}] {} - with: [{}] {} As: {}\n",
+        attacker->team->Tag,
+        attacker->player_name,
+        defender->team->Tag,
+        defender->player_name,
+        weapon.id,
+        weapon.name,
+        loadout.empty() ? "Unknown" : loadout.front().name
+    );
+
     if(AP_VEC_MATCH_FOUND(m_rules.banned_item_ids, attacker_weapon_id))
     {
       return true;
@@ -101,27 +118,13 @@ namespace ApCore::Events::POG
     }
     else
     {
-      attacker->AddKill(headshot);
-      attacker->AddScore(defender_is_max ? m_rules.max_kill : m_rules.kill);
+      if(!attacker_is_max)
+      {
+        attacker->AddKill(headshot);
+        attacker->AddScore(defender_is_max ? m_rules.max_kill : m_rules.kill);
+      }
       defender->AddScore(m_rules.death);
     }
-
-    auto item_db    = ApData::Sql::Models::Item(m_db);
-    auto loadout_db = ApData::Sql::Models::Loadout(m_db);
-    auto weapon     = item_db.FindByItemID(attacker_weapon_id);
-    auto loadout    = loadout_db.FetchByProfileID(attacker_loadout_id);
-
-    fmt::print(
-        fmt::emphasis::bold | fg(fmt::color::red),
-        "[{}] {} killed [{}] {} | with: [{}]{} As: {}\n",
-        attacker->team->Tag,
-        attacker->player_name,
-        defender->team->Tag,
-        defender->player_name,
-        weapon.id,
-        weapon.name,
-        loadout.empty() ? "Unknown" : loadout.front().name
-    );
     return true;
   }
 
