@@ -8,6 +8,7 @@
 #include "Models/Profile.hpp"
 #include "Models/Faction.hpp"
 #include "Models/Event.hpp"
+#include "Models/Vehicle.hpp"
 #include <ApCore/Nets/CensusAPI.hpp>
 
 namespace ApData::Sql
@@ -35,6 +36,7 @@ namespace ApData::Sql
     int SeedFactions(ApData::Sql::Models::Faction&);
     int SeedProfiles(ApData::Sql::Models::Profile&);
     int SeedLoadouts(ApData::Sql::Models::Loadout&);
+    int SeedVehicles(ApData::Sql::Models::Vehicle&);
     int SeedCategories(ApData::Sql::Models::ItemCategory&);
     int SeedEvents(ApData::Sql::Models::Event&);
 

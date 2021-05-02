@@ -25,6 +25,7 @@ namespace ApData::Sql
     ApData::Sql::Models::Item         items_model(db);
     ApData::Sql::Models::ItemCategory category_model(db);
     ApData::Sql::Models::Loadout      loadout_model(db);
+    ApData::Sql::Models::Vehicle      vehicle_model(db);
     ApData::Sql::Models::Profile      profile_model(db);
     ApData::Sql::Models::Faction      faction_model(db);
     ApData::Sql::Models::Event        event_model(db);
@@ -62,6 +63,14 @@ namespace ApData::Sql
       auto rec_count = SeedLoadouts(loadout_model);
       total_records_created += rec_count;
       reporter(fmt::format("- Created {} Loadout Records", rec_count), false);
+    }
+
+    if(vehicle_model.CreateTable())
+    {
+      reporter("Seeding Vehicle DB:", false);
+      auto rec_count = SeedVehicles(vehicle_model);
+      total_records_created += rec_count;
+      reporter(fmt::format("- Created {} Vehicle Records", rec_count), false);
     }
 
     if(category_model.CreateTable())
@@ -280,7 +289,6 @@ namespace ApData::Sql
         "MAX"
     };
 
-
     if(!loadout_data.contains("loadout_list") || !loadout_data["loadout_list"].is_array())
     {
       reporter(fmt::format("Error couldn't resolve Census Loadout data!: {}", loadout_data.dump()), true);
@@ -313,6 +321,44 @@ namespace ApData::Sql
       }
 
       created_record_count += model.CreateRecord();
+    }
+
+    return created_record_count;
+  }
+
+  int DBSeed::SeedVehicles(ApData::Sql::Models::Vehicle &model)
+  {
+    int created_record_count = 0;
+    auto response = census->GetCensusQuery("/get/ps2:v2/vehicle", "?c:show=vehicle_id,name.en,type_id,image_set_id,image_path&c:limit=500");
+
+    if(!VerifyCensusResponse("SeedVehicles", response))
+    {
+      return created_record_count;
+    }
+
+    JSON vehicle_data = response.data;
+    if(!vehicle_data.contains("vehicle_list") || !vehicle_data["vehicle_list"].is_array())
+    {
+      reporter(fmt::format("Error couldn't resolve Vehicle data!: {}", vehicle_data.dump()), true);
+      return 0;
+    }
+
+    for(const auto &vehicle_item : vehicle_data["vehicle_list"])
+    {
+      try
+      {
+        ApData::Sql::Models::Data::Vehicle vec_data;
+        vehicle_item["name"]["en"].get_to(model.Data.name);
+        model.Data.image_path   = vehicle_item.contains("image_path") ? vehicle_item["image_path"].get<std::string>() : "";
+        model.Data.image_set_id = vehicle_item.contains("image_set_id") ? vehicle_item["image_set_id"].get<std::string>() : "";
+        model.Data.vehicle_id   = fast_atoi(vehicle_item["vehicle_id"].get<std::string>());
+        model.Data.type_id      = fast_atoi(vehicle_item["type_id"].get<std::string>());
+        created_record_count   += model.CreateRecord();
+      }
+      catch(...)
+      {
+        continue;
+      }
     }
 
     return created_record_count;
