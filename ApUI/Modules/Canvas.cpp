@@ -8,9 +8,10 @@ namespace ApUI::Modules
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    static bool demo = true;
-    if(demo)
-      ImGui::ShowDemoWindow(&demo);
+    #if DEBUG_MODE
+      static bool demo = true;
+      if(demo) ImGui::ShowDemoWindow(&demo);
+    #endif
 
     for(auto &panel : m_panels)
     {

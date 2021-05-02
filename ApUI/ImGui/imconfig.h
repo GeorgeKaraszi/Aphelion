@@ -108,6 +108,12 @@ namespace ImGui
 }
 */
 
+#if !DEBUG_MODE
+  #ifndef IMGUI_DISABLE_DEMO_WINDOWS
+    #define IMGUI_DISABLE_DEMO_WINDOWS
+  #endif
+#endif
+
 #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #define IM_VEC2_CLASS_EXTRA \
 ImVec2 operator-(const ImVec2& rhs)  { return ImVec2(x - rhs.x, y - rhs.y); } \

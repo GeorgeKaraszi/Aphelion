@@ -36,18 +36,18 @@ endif()
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
 conan_cmake_configure(
-        REQUIRES boost/1.74.0
-                 openssl/1.1.1i
-                 nlohmann_json/3.9.1
-                 sqlitecpp/3.1.1
-                 fmt/7.1.3
-        GENERATORS cmake
-        OPTIONS boost:shared=False
-                openssl:shared=False
-                sqlitecpp:shared=False
-                fmt:shared=False
-        PROFILE_BUILD ${CONAN_PROFILE}
-        OUTPUT_QUIET
+    REQUIRES boost/1.74.0
+             openssl/1.1.1i
+             nlohmann_json/3.9.1
+             sqlitecpp/3.1.1
+             fmt/7.1.3
+    GENERATORS cmake
+    OPTIONS boost:shared=False
+            openssl:shared=False
+            sqlitecpp:shared=False
+            fmt:shared=False
+    PROFILE_BUILD ${CONAN_PROFILE}
+    OUTPUT_QUIET
 )
 
 conan_cmake_autodetect(settings)
