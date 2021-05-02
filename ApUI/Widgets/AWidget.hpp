@@ -16,6 +16,7 @@ namespace ApUI::Widgets
   {
   public:
     AWidget();
+    AWidget(const char* id);
     void Draw() override;
 
     void LinkTo(const AWidget &other);

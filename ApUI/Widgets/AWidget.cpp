@@ -11,6 +11,8 @@ namespace ApUI::Widgets
     widget_id = "##" + std::to_string(_WIDGET_ID_INCREMENT_++);
   }
 
+  AWidget::AWidget(const char *id) : m_parent(nullptr), widget_id(id) {}
+
   void AWidget::Draw()
   {
     if(!enabled) return;

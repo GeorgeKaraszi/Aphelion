@@ -6,16 +6,19 @@
 
 namespace ApUI::Widgets::Tables
 {
+  struct alignas(32) TableOptions
+  {
+    ImGuiTableFlags TableFlags        = 0;
+    ImGuiTableColumnFlags ColumnFlags = 0;
+    ImVec2 OuterSide                  = ImVec2(-FLT_MIN, 0);
+    float InnerWidth                  = 0.0f;
+    bool DisplayHeaders               = true;
+  };
+
   class Table : public Layout::Group
   {
   public:
-    explicit Table(
-        ImGuiTableFlags tbl_flags       = 0,
-        ImGuiTableColumnFlags col_flags = 0,
-        const ImVec2& outer_size        = ImVec2(-FLT_MIN, 0),
-        float inner_width               = 0.0f
-      );
-
+    explicit Table(const char* tbl_id, const TableOptions& options);
     void AddColumn(const std::string &name);
     void AddColumns(const std::vector<std::string> &names);
     Row &CreateRow(const std::string &row_id);
@@ -29,6 +32,7 @@ namespace ApUI::Widgets::Tables
     ImGuiTableFlags TableFlags;
     ImGuiTableColumnFlags ColumnFlags;
     std::vector<std::string> Columns;
+    TableOptions Options;
 
   private:
     ImVec2 m_outer_size;

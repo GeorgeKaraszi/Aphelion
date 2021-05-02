@@ -10,7 +10,7 @@ namespace ApUI::Widgets::Texts
   {
   public:
     explicit TextColored(const std::string &content, const Types::Color& color = Types::Color::White);
-    void SetValues(std::string content, const Types::Color& color);
+    TextColored &SetValues(std::string content, const Types::Color& color);
   protected:
     void _Draw_Impl() override;
   public:

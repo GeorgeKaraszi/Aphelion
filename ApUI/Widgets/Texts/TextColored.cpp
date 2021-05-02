@@ -8,10 +8,11 @@ namespace ApUI::Widgets::Texts
   : AText(content), Color(color)
   {}
 
-  void TextColored::SetValues(std::string text, const Types::Color &color)
+  TextColored& TextColored::SetValues(std::string text, const Types::Color &color)
   {
     Content = std::move(text);
     Color   = color;
+    return *this;
   }
 
   void TextColored::_Draw_Impl()

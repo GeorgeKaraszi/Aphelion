@@ -15,14 +15,12 @@ namespace ApGame::Contents
     using UI_N_TEAM   = std::pair<ApUI::Widgets::Layout::Group*, PS_TEAM_PTR>;
   public:
     ScoreContent();
-
-//    void ResizeTeams(int size);
-//    void RegisterTeam(int idx, const std::string &tag);
+    void ResizeTeams(int size);
+    void RegisterTeam(int idx, const std::string &tag);
 
   private:
-//    void AddTeam(int idx, const std::string &tag);
+    void RecreateTeams();
     void _Draw_Impl() override;
-//    static void RemoveTeam(PS_TEAM_PTR team);
 
   public:
     ApCore::Core::TeamManager TeamManager;

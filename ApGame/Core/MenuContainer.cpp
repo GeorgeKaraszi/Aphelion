@@ -122,11 +122,11 @@ namespace ApGame::Core
     m_menu_bar->Settings->ClickEvent += [&] { SET_ACTIVE(m_settings_body, m_menu_bar->Settings) };
 
     m_settings_body->TeamSizeChangedEvent += [&](int size) {
-      m_score_body->TeamManager.SetSize(size);
+      m_score_body->ResizeTeams(size);
     };
 
     m_settings_body->TeamAddedEvent += [&](int idx, const std::string &tag) {
-      m_score_body->TeamManager.RegisterTeam(idx, tag);
+      m_score_body->RegisterTeam(idx, tag);
     };
 
     m_menu_bar->Score->ClickEvent.Invoke();

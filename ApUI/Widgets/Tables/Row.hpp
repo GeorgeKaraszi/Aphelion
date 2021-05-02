@@ -11,7 +11,7 @@ namespace ApUI::Widgets::Tables
   class Row : public Layout::Group
   {
   public:
-    explicit Row(std::string row_id, Table* table);
+    explicit Row(const std::string& row_id, Table* table);
     Texts::TextColored &operator[](const std::string& key);
     Texts::TextColored &FindOrCreateColumnData(const std::string &key);
   protected:

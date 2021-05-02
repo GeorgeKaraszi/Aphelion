@@ -4,8 +4,8 @@
 
 namespace ApUI::Widgets::Tables
 {
-  Row::Row(std::string row_id, Table* table)
-  : RowID(std::move(row_id)), m_table(table)
+  Row::Row(const std::string& row_id, Table* table)
+  : RowID(row_id), m_table(table), Layout::Group(row_id.c_str())
   {}
 
   Texts::TextColored &Row::operator[](const std::string &key)
@@ -29,10 +29,12 @@ namespace ApUI::Widgets::Tables
 
   void Row::_Draw_Impl()
   {
-    for(auto &key : m_table->Columns)
+    ImGui::TableNextRow();
+
+    for(int i = 0; i < m_table->Columns.size(); i++)
     {
-      ImGui::TableNextColumn();
-      FindOrCreateColumnData(key).Draw();
+      ImGui::TableSetColumnIndex(i);
+      FindOrCreateColumnData(m_table->Columns[i]).Draw();
     }
   }
 }
