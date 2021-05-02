@@ -110,10 +110,11 @@ namespace ApGame::Core
     m_menu      = new MenuContainer();
     auto *panel = m_menu;
     auto *io    = &ImGui::GetIO();
-    auto pos    = ImVec2(io->DisplaySize.x/4,  io->DisplaySize.y/4);
-    auto size   = ImVec2(io->DisplaySize.x/1.5f, io->DisplaySize.y/2);
+    auto size   = ImVec2(io->DisplaySize.x/1.1f, io->DisplaySize.y/2.0f);
+    auto pos    = ImVec2((io->DisplaySize.x/2.0f) - (size.x/2.0f), (io->DisplaySize.y/2.0f) - (size.y/2.0f));
     panel->SetPosition(pos);
     panel->SetSize(size);
+    panel->AppendFlags(ImGuiWindowFlags_NoMove);
     canvas.AddPanel(*panel);
     uiManager->SetCanvas(canvas);
   }
