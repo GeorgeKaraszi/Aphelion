@@ -9,7 +9,7 @@ namespace ApData::Sql
 {
   [[maybe_unused]]
   DBSeed::DBSeed(ApData::Sql::Database &database, ApCore::Nets::CensusAPI *census_api)
-    : DBSeed(database, census_api, [](const std::string& msg, bool error) { fmt::print(msg); })
+    : DBSeed(database, census_api, [](const std::string& msg, bool error) { fmt::print("{}", msg);})
   {}
 
   DBSeed::DBSeed(
