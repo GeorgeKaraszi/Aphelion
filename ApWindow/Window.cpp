@@ -7,14 +7,14 @@
 namespace ApWindow
 {
   Window::Window(HINSTANCE inst, bool primary_screen)
-  : m_appInst(inst), m_window_visible(true)
+      : m_appInst(inst), m_window_visible(true)
   {
-    auto display   = CSysDisplays();
+    auto display = CSysDisplays();
     m_monitor_info = primary_screen ? display.GetPrimary() : display.GetSecondary();
   }
 
   Window::Window(HINSTANCE inst, WNDPROC lpWndProc, const wchar_t *name, bool primary_screen)
-  : Window(inst, primary_screen)
+      : Window(inst, primary_screen)
   {
     m_hwnd = MakeWindow(lpWndProc, name);
   }
@@ -31,23 +31,24 @@ namespace ApWindow
 
   bool Window::AddNotificationIcon(HWND hwnd)
   {
-      NOTIFYICONDATA nid = { sizeof(nid) };
-      nid.hWnd             = hwnd;
-      nid.uFlags           = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_SHOWTIP | NIF_GUID;
-      nid.uID              = AP_UID;
-      nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
-      LoadIconMetric(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_NOTIFICATIONICON), LIM_SMALL, &nid.hIcon);
-      Shell_NotifyIcon(NIM_ADD, &nid);
+    NOTIFYICONDATA nid = {sizeof(nid)};
+    nid.hWnd = hwnd;
+    nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_SHOWTIP;
+    nid.uID = AP_UID;
+    nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
+    lstrcpy(nid.szTip, L"Aphelion");
+    LoadIconMetric(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_NOTIFICATIONICON), LIM_SMALL, &nid.hIcon);
 
-      nid.uVersion = NOTIFYICON_VERSION_4;
-      return Shell_NotifyIcon(NIM_SETVERSION, &nid);
+    Shell_NotifyIcon(NIM_ADD, &nid);
+    nid.uVersion = NOTIFYICON_VERSION_4;
+    return Shell_NotifyIcon(NIM_SETVERSION, &nid);
   }
 
   void Window::DeleteNotificationIcon()
   {
-    NOTIFYICONDATA nid = { sizeof(nid) };
-    nid.uFlags         = NIF_GUID;
-    nid.uID            = AP_UID;
+    NOTIFYICONDATA nid = {sizeof(nid)};
+    nid.uFlags = NIF_GUID;
+    nid.uID = AP_UID;
     Shell_NotifyIcon(NIM_DELETE, &nid);
   }
 
@@ -100,18 +101,18 @@ namespace ApWindow
   {
     HWND target;
     WNDCLASSEX wcex;
-    wcex.cbSize        = sizeof(WNDCLASSEX);
-    wcex.style         = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc   = lpWndProc;
-    wcex.cbClsExtra    = 0;
-    wcex.cbWndExtra    = 0;
-    wcex.hInstance     = m_appInst;
-    wcex.hIcon         = LoadIcon(m_appInst, MAKEINTRESOURCE(IDI_NOTIFICATIONICON));
-    wcex.hCursor       = LoadCursor(nullptr, IDC_ARROW);
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = lpWndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = m_appInst;
+    wcex.hIcon = LoadIcon(m_appInst, MAKEINTRESOURCE(IDI_NOTIFICATIONICON));
+    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH) CreateSolidBrush(0);
-    wcex.lpszMenuName  = nullptr;
+    wcex.lpszMenuName = nullptr;
     wcex.lpszClassName = name;
-    wcex.hIconSm       = LoadIcon(m_appInst, MAKEINTRESOURCE(IDI_NOTIFICATIONICON));
+    wcex.hIconSm = LoadIcon(m_appInst, MAKEINTRESOURCE(IDI_NOTIFICATIONICON));
     if (!RegisterClassEx(&wcex))
     {
       return nullptr;
@@ -136,12 +137,12 @@ namespace ApWindow
         nullptr,
         m_appInst,
         nullptr
-    );
+                           );
 
     ShowWindow(target, SW_SHOW);
     UpdateWindow(target);
 
-    const MARGINS Margin = { -1 };
+    const MARGINS Margin = {-1};
     HR(DwmExtendFrameIntoClientArea(target, &Margin));
 
     return target;
