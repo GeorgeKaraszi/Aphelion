@@ -1,9 +1,4 @@
-macro(SetupCoreSystemPackages)
-    set(VCPKG_LIBRARY_LINKAGE static)
-    set(Boost_USE_STATIC_LIBS        ON)
-    set(Boost_USE_MULTITHREADED      ON)
-    set(Boost_USE_STATIC_RUNTIME     ON)
-
+macro(FindCoreSystemPackages)
     find_package(Boost REQUIRED COMPONENTS system filesystem thread beast)
     find_package(fmt CONFIG REQUIRED)
     find_package(SQLiteCpp REQUIRED)
@@ -19,4 +14,9 @@ macro(SetupCoreSystemPackages)
             OpenSSL::Crypto
             ${Boost_LIBRARIES}
     )
+endmacro()
+
+macro(add_subdirectory_and_link_libs subdirectory)
+    add_subdirectory(${subdirectory})
+    target_link_libraries(${subdirectory} PRIVATE ${AP_LIBRARIES})
 endmacro()

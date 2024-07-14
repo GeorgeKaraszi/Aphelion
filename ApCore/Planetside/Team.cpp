@@ -16,7 +16,7 @@ namespace ApCore::Planetside
 
   Team::~Team()
   {
-//    StopTracking();
+    // StopTracking();
   }
 
   void Team::GatherCensusInfo()
